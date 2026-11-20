@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="ノミドキ（Nomidoki）の使い方ガイドとよくある質問（Q&A）。深夜4:00の日付切替仕様、隔日（1日おき）登録、データの保存場所や引き継ぎについて解説しています。" />
+  <meta name="description" content="ノミドキ（Nomidoki）の公式使い方ガイド・よくある質問（Q&A）。深夜4:00の日付切り替わり仕様、記録忘れのさかのぼり追加や取り消し方法、隔日・週1スケジュールの登録手順などを詳しく解説します。" />
   <title>使い方ガイド・よくある質問（Q&A）｜ノミドキ（Nomidoki）</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -29,6 +29,11 @@
       --border-color: #cbd5e1;
       --border-soft: #e2e8f0;
 
+      --warning: #b45309;
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      --warning-text: #78350f;
+
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
@@ -36,6 +41,8 @@
       --radius-full: 9999px;
 
       --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-sm: 0 3px 10px rgba(13, 148, 136, 0.07);
+      --shadow-md: 0 10px 24px rgba(13, 148, 136, 0.11);
     }
 
     *, *::before, *::after {
@@ -53,9 +60,22 @@
       font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
       background-color: var(--page-bg);
       color: var(--text-main);
-      line-height: 1.8;
+      line-height: 1.75;
       overflow-x: hidden;
       min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
     }
 
     a {
@@ -64,7 +84,7 @@
 
     .container {
       width: 100%;
-      max-width: 920px;
+      max-width: 980px;
       margin: 0 auto;
       padding: 0 16px;
     }
@@ -74,13 +94,19 @@
       align-items: center;
       justify-content: center;
       gap: 7px;
-      min-height: 42px;
-      padding: 8px 16px;
+      min-height: 44px;
+      padding: 10px 18px;
       border-radius: var(--radius-md);
       font-weight: 700;
-      font-size: 0.88rem;
+      font-size: 0.9rem;
+      line-height: 1.3;
+      transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
       text-decoration: none;
       white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
     }
 
     .btn-sm {
@@ -93,6 +119,22 @@
     .btn-primary {
       background-color: var(--primary);
       color: #ffffff;
+      box-shadow: 0 3px 10px rgba(13, 148, 136, 0.28);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: var(--surface);
+      color: var(--primary-hover);
+      border: 2px solid var(--primary-border);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--primary-light);
+      border-color: var(--primary);
     }
 
     .btn-outline {
@@ -101,8 +143,36 @@
       border: 1.5px solid var(--border-color);
     }
 
+    .btn-outline:hover {
+      background-color: var(--surface-muted);
+      border-color: #94a3b8;
+    }
+
     .btn-ghost {
+      background-color: transparent;
       color: var(--text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-hover);
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.74rem;
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .badge-cat {
+      background-color: var(--primary-light);
+      color: var(--primary-hover);
+      border: 1px solid var(--primary-border);
     }
 
     .site-header {
@@ -128,6 +198,7 @@
       gap: 10px;
       text-decoration: none;
       color: var(--text-main);
+      flex-shrink: 0;
     }
 
     .brand-icon {
@@ -139,12 +210,15 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      box-shadow: 0 3px 10px rgba(13, 148, 136, 0.3);
       flex-shrink: 0;
     }
 
     .brand-title {
       font-size: 1.18rem;
       font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
       line-height: 1.15;
     }
 
@@ -159,6 +233,7 @@
       align-items: center;
       gap: 8px;
       flex-wrap: wrap;
+      justify-content: flex-end;
     }
 
     .breadcrumb-bar {
@@ -177,11 +252,16 @@
     }
 
     .breadcrumb-list a {
+      color: var(--primary-hover);
       font-weight: 700;
       text-decoration: none;
     }
 
-    .page-hero {
+    .breadcrumb-list a:hover {
+      text-decoration: underline;
+    }
+
+    .faq-hero {
       background: radial-gradient(circle at top right, #ccfbf1 0%, #f0fdfa 45%, #ffffff 100%);
       padding: 36px 0 32px;
       border-bottom: 1px solid var(--border-soft);
@@ -199,91 +279,318 @@
       margin-bottom: 10px;
     }
 
-    .page-hero h1 {
+    .faq-hero h1 {
       font-size: clamp(1.45rem, 3.6vw, 2.05rem);
       font-weight: 800;
       line-height: 1.35;
       margin-bottom: 10px;
+      color: var(--text-main);
     }
 
-    .page-hero p {
+    .faq-hero p {
       font-size: 0.94rem;
       color: var(--text-secondary);
       max-width: 740px;
     }
 
-    .content-section {
-      padding: 28px 0 44px;
+    .quickstart-section {
+      margin: 24px 0 10px;
     }
 
-    .card {
+    .quickstart-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .quickstart-card {
       background-color: var(--surface);
       border: 1px solid var(--border-soft);
-      border-radius: var(--radius-xl);
-      padding: clamp(20px, 3.5vw, 28px);
-      margin-bottom: 22px;
+      border-radius: var(--radius-lg);
+      padding: 18px;
       box-shadow: var(--shadow-xs);
     }
 
-    .card-title {
-      font-size: 1.15rem;
-      font-weight: 800;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-soft);
-    }
-
-    .step-list {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
-
-    .step-item {
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
-      background-color: var(--surface-muted);
-      border: 1px solid var(--border-soft);
-      border-radius: var(--radius-md);
-      padding: 14px 16px;
-    }
-
-    .step-num {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
+    .step-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
       background-color: var(--primary);
       color: #ffffff;
+      font-size: 0.72rem;
       font-weight: 800;
-      font-size: 0.88rem;
+      padding: 3px 10px;
+      border-radius: var(--radius-full);
+      margin-bottom: 8px;
+    }
+
+    .quickstart-card h2 {
+      font-size: 0.98rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .quickstart-card p {
+      font-size: 0.83rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .filter-toolbar {
+      background-color: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin: 20px 0 18px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .filter-toolbar-top {
       display: flex;
       align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
+    }
+
+    .toolbar-controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex: 1;
+      min-width: 0;
+      justify-content: flex-end;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 1 1 240px;
+      min-width: 0;
+      max-width: 420px;
+    }
+
+    .search-input {
+      width: 100%;
+      min-height: 42px;
+      padding: 8px 14px 8px 36px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      background-color: var(--surface-muted);
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background-color: #ffffff;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 11px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+
+    .category-tab-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .category-tab-btn {
+      min-height: 38px;
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-color);
+      background-color: var(--surface);
+      color: var(--text-secondary);
+      font-size: 0.82rem;
+      font-weight: 700;
+      transition: all 0.14s ease;
+    }
+
+    .category-tab-btn:hover {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+    }
+
+    .category-tab-btn.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .faq-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 28px;
+    }
+
+    .faq-item {
+      background-color: var(--surface);
+      border: 1.5px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-xs);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .faq-item[open] {
+      border-color: var(--primary-border);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .faq-question {
+      list-style: none;
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      font-weight: 800;
+      font-size: 0.96rem;
+      color: var(--text-main);
+      user-select: none;
+    }
+
+    .faq-question::-webkit-details-marker {
+      display: none;
+    }
+
+    .faq-question:hover {
+      background-color: var(--primary-light);
+    }
+
+    .faq-q-left {
+      display: flex;
+      align-items: flex-start;
+      gap: 11px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .faq-q-text-wrap {
+      flex: 1;
+      min-width: 0;
+      word-break: break-word;
+    }
+
+    .faq-q-badge {
+      display: inline-flex;
+      align-items: center;
       justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background-color: var(--primary);
+      color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 800;
       flex-shrink: 0;
       margin-top: 2px;
     }
 
-    .faq-item {
-      padding: 16px 0;
-      border-bottom: 1px solid var(--border-soft);
+    .faq-chevron {
+      font-size: 0.85rem;
+      color: var(--primary-hover);
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+      margin-top: 4px;
     }
 
-    .faq-item:last-child {
-      border-bottom: none;
-      padding-bottom: 0;
+    .faq-item[open] .faq-chevron {
+      transform: rotate(180deg);
     }
 
-    .faq-q {
-      font-size: 1rem;
-      font-weight: 800;
-      color: var(--primary-dark);
-      margin-bottom: 6px;
-    }
-
-    .faq-a {
+    .faq-answer {
+      padding: 14px 20px 20px 59px;
       font-size: 0.9rem;
       color: var(--text-secondary);
+      line-height: 1.8;
+      border-top: 1px dashed var(--border-soft);
+      background-color: #ffffff;
+      word-break: break-word;
+    }
+
+    .faq-answer p {
+      margin-bottom: 8px;
+    }
+
+    .faq-answer p:last-child {
+      margin-bottom: 0;
+    }
+
+    .faq-tip-box {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background-color: var(--primary-light);
+      border-left: 3.5px solid var(--primary);
+      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+      font-size: 0.84rem;
+      color: var(--primary-dark);
+      font-weight: 700;
+    }
+
+    .ad-slot-wrapper {
+      margin: 24px 0;
+      padding: 16px;
+      background-color: var(--surface);
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-lg);
+    }
+
+    .ad-slot-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .ad-tag {
+      background-color: var(--primary-subtle);
+      color: var(--primary-dark);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 800;
+    }
+
+    .disclaimer-card {
+      background-color: var(--warning-bg);
+      border: 2px solid var(--warning-border);
+      border-radius: var(--radius-xl);
+      padding: 22px 24px;
+      color: var(--warning-text);
+      margin-bottom: 28px;
+    }
+
+    .disclaimer-card h3 {
+      font-size: 1.02rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .disclaimer-card ul {
+      margin-left: 20px;
+      font-size: 0.85rem;
+      line-height: 1.7;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
     }
 
     .site-footer {
@@ -291,6 +598,7 @@
       color: #ccfbf1;
       padding: 32px 0 44px;
       font-size: 0.82rem;
+      margin-top: 32px;
     }
 
     .footer-links {
@@ -310,6 +618,35 @@
     .footer-links a:hover {
       color: #99f6e4;
     }
+
+    @media (max-width: 767px) {
+      .quickstart-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .filter-toolbar-top {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .toolbar-controls {
+        width: 100%;
+        justify-content: flex-start;
+      }
+
+      .search-input-wrap {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+
+      .faq-question {
+        padding: 14px 16px;
+      }
+
+      .faq-answer {
+        padding: 14px 16px 18px;
+      }
+    }
   </style>
 </head>
 <body>
@@ -326,12 +663,12 @@
         </div>
         <div>
           <div class="brand-title">ノミドキ</div>
-          <div class="brand-sub">NOMIDOKI USER GUIDE &amp; FAQ</div>
+          <div class="brand-sub">NOMIDOKI USER GUIDE &amp; Q&amp;A</div>
         </div>
       </a>
 
       <div class="header-actions">
-        <a href="columns.html" class="btn btn-ghost btn-sm">飲み時コラム</a>
+        <a href="columns.html" class="btn btn-ghost btn-sm">解説コラム</a>
         <a href="contact.html" class="btn btn-ghost btn-sm">お問い合わせ</a>
         <a href="index.html" class="btn btn-outline btn-sm">← アプリ・トップへ戻る</a>
       </div>
@@ -350,88 +687,98 @@
   </nav>
 
   <main>
-    <section class="page-hero">
+    <!-- ヒーローセクション -->
+    <section class="faq-hero">
       <div class="container">
-        <span class="hero-eyebrow">USER GUIDE &amp; FAQ</span>
+        <span class="hero-eyebrow">USER GUIDE &amp; FREQUENTLY ASKED QUESTIONS</span>
         <h1>使い方ガイド・よくある質問（Q&amp;A）</h1>
         <p>
-          「ノミドキ（Nomidoki）」の基本的な操作ステップと、日付切替・データ保存・服用サイクルに関するよくあるご質問にお答えします。
+          ノミドキ（Nomidoki）の基本的な使い方や、よくある質問とその回答をまとめています。
         </p>
       </div>
     </section>
 
-    <section class="container content-section">
-      <!-- 3ステップガイド -->
-      <div class="card">
-        <h2 class="card-title">📖 3ステップでかんたん！基本の使い方</h2>
-        <div class="step-list">
-          <div class="step-item">
-            <div class="step-num">1</div>
-            <div>
-              <div style="font-weight:800; margin-bottom:2px;">お薬・サプリメントを登録する</div>
-              <p style="font-size:0.88rem; color:var(--text-secondary);">トップページの「＋ お薬を追加登録」ボタンから、お薬名・飲み時（朝食後、寝る前など）・服用サイクルを入力して登録します。</p>
-            </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">2</div>
-            <div>
-              <div style="font-weight:800; margin-bottom:2px;">飲んだら「✓ 飲んだ！」をタップする</div>
-              <p style="font-size:0.88rem; color:var(--text-secondary);">お薬を服用したら「✓ 飲んだ！」ボタンを押します。服用時刻が自動で記録され、上部の達成カウントが更新されます。</p>
-            </div>
-          </div>
-          <div class="step-item">
-            <div class="step-num">3</div>
-            <div>
-              <div style="font-weight:800; margin-bottom:2px;">「📜 履歴を見る」で過去7日分を振り返る</div>
-              <p style="font-size:0.88rem; color:var(--text-secondary);">「履歴を見る」ボタンを押すと、直近7日間の日付と服用時刻を一覧で確認できます。</p>
-            </div>
-          </div>
+    <section class="container">
+      <!-- かんたん3ステップ使い方ガイド -->
+      <div class="quickstart-section">
+        <div class="quickstart-grid">
+          <article class="quickstart-card">
+            <span class="step-badge">STEP 1</span>
+            <h2>お薬・サプリを登録する</h2>
+            <p>
+              「＋ お薬・サプリを登録」から処方薬・市販薬・サプリメントを登録します。毎日だけでなく「隔日（1日おき）」や「曜日指定（週1回）」も設定可能です。
+            </p>
+          </article>
+
+          <article class="quickstart-card">
+            <span class="step-badge">STEP 2</span>
+            <h2>飲んだら「飲んだ！」をタップ</h2>
+            <p>
+              「今日の飲み時」画面で時間帯ごとの「飲んだ！」ボタンを押すだけで服用時刻が記録され、登録した残薬数から自動的に1回分が差し引かれます。
+            </p>
+          </article>
+
+          <article class="quickstart-card">
+            <span class="step-badge">STEP 3</span>
+            <h2>服薬履歴カレンダーで確認・修正</h2>
+            <p>
+              「服薬履歴」タブのカレンダーから飲んだ時間と内容をタイムラインで確認できます。記録忘れのさかのぼり追加や「実は飲んでなかった」の取り消しも可能です。
+            </p>
+          </article>
         </div>
       </div>
 
-      <!-- Q&A -->
-      <div class="card" style="margin-bottom:0;">
-        <h2 class="card-title">❓ よくある質問（Q&amp;A）</h2>
-
-        <div class="faq-item">
-          <div class="faq-q">Q1. なぜ日付の切り替えが「深夜0:00」ではなく「午前4:00」なのですか？</div>
-          <div class="faq-a">
-            A. 「寝る前のお薬」を深夜0時〜2時頃に服用される方も多いため、0時ちょうどに翌日のリストへ切り替わってしまうと「前日の寝る前分」が記録しづらくなります。そのため、ノミドキでは毎日午前4:00を1日の区切りとして設計しています。
+      <!-- 検索・カテゴリ絞り込み＆一括開閉バー -->
+      <div class="filter-toolbar">
+        <div class="filter-toolbar-top">
+          <div style="font-size:0.86rem; font-weight:800; color:var(--text-main);" id="faq-count-label">
+            全10件のQ&amp;Aを表示中
+          </div>
+          <div class="toolbar-controls">
+            <div class="search-input-wrap">
+              <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <input type="search" id="faq-search-input" class="search-input" placeholder="キーワードで検索（例：深夜、記録忘れ、隔日、パスワード）" oninput="handleFaqSearch(this.value)" />
+            </div>
+            <button type="button" class="btn btn-outline btn-sm" onclick="toggleAllFaqItems(true)">すべて開く</button>
+            <button type="button" class="btn btn-ghost btn-sm" onclick="toggleAllFaqItems(false)">すべて閉じる</button>
           </div>
         </div>
+        <div class="category-tab-row" id="faq-category-tabs"></div>
+      </div>
 
-        <div class="faq-item">
-          <div class="faq-q">Q2. 間違えて「✓ 飲んだ！」を押してしまった場合はどうすればいいですか？</div>
-          <div class="faq-a">
-            A. 記録済みのお薬カードの右側にある「記録を取り消す」ボタンを押すと、すぐに未服用状態へ戻すことができます。
+      <!-- Q&Aアコーディオン一覧 -->
+      <div class="faq-list" id="faq-list-container"></div>
+
+      <!-- ポリシー準拠広告枠 -->
+      <aside class="ad-slot-wrapper" aria-label="ノミドキ公式インフォメーション">
+        <div class="ad-slot-label">
+          <span class="ad-tag">ノミドキ公式案内 / PR</span>
+          <span>インフォメーション枠</span>
+        </div>
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+          <div style="flex:1; min-width:220px;">
+            <strong style="font-size:0.9rem; color:var(--text-main);">⏰ さっそくノミドキで毎日の服薬・サプリ管理を始めよう！</strong>
+            <p style="font-size:0.79rem; color:var(--text-secondary); margin-top:3px;">
+              メールアドレス（認証）とニックネームで無料会員登録すると、スマホ・PCのどちらからでも最新の服薬データをクラウド同期できます。
+            </p>
           </div>
+          <a href="index.html" class="btn btn-primary btn-sm">ノミドキのアプリを開く →</a>
         </div>
+      </aside>
 
-        <div class="faq-item">
-          <div class="faq-q">Q3. 「1日おき（隔日）」のお薬はどのように表示されますか？</div>
-          <div class="faq-a">
-            A. 服用サイクルで「1日おき（隔日）」を選んで登録すると、登録日を初日として2日ごと（1日目・3日目・5日目…）に自動で今日のリストへ表示されます。
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-q">Q4. 登録したデータはどこに保存されますか？外部に送信されますか？</div>
-          <div class="faq-a">
-            A. すべての登録データと服用履歴は、ご利用中の端末のブラウザ内（localStorage）にのみ保存されます。運営者のサーバーへ送信されることはありませんので、プライバシー面でも安心してご利用いただけます。なお、ブラウザの履歴・サイトデータを消去すると記録も消去されますのでご注意ください。
-          </div>
-        </div>
-
-        <div class="faq-item">
-          <div class="faq-q">Q5. スマートフォンのホーム画面にアイコンを追加して使えますか？</div>
-          <div class="faq-a">
-            A. はい、可能です。iPhone（Safari）の場合は画面下部の共有ボタンから「ホーム画面に追加」、Android（Chrome）の場合は右上のメニューから「ホーム画面に追加」を選ぶことで、アプリのようにワンタップで起動できます。
-          </div>
-        </div>
-
-        <div style="margin-top:20px; padding-top:16px; border-top:1px solid var(--border-soft); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-          <span style="font-size:0.86rem; color:var(--text-secondary);">解決しない点やご要望がございましたら、お気軽にお知らせください。</span>
-          <a href="contact.html" class="btn btn-primary btn-sm">お問い合わせ窓口へ →</a>
-        </div>
+      <!-- 医療・健康情報に関する免責事項 -->
+      <div class="disclaimer-card">
+        <h3>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <span>医療・健康情報に関する免責事項</span>
+        </h3>
+        <ul>
+          <li>「ノミドキ（Nomidoki）」は個人の服薬スケジュール・残薬管理および一般的な栄養学特性の整理を目的としたセルフマネジメントツールであり、医師・薬剤師による診療、診断、処方、または医学的助言に代わるものではありません。</li>
+          <li>処方薬・市販薬を服用する際は、必ず主治医・かかりつけ薬剤師の指示およびお薬袋・添付文書に記載された用法・用量を厳守してください。</li>
+        </ul>
       </div>
     </section>
   </main>
@@ -447,12 +794,210 @@
         <a href="index.html#lp-disclaimer">医療免責事項</a>
         <a href="index.html#privacy-policy-doc">プライバシーポリシー</a>
         <a href="index.html#terms-doc">利用規約</a>
+        <a href="index.html#operator-doc">運営者情報</a>
       </div>
       <p style="margin-bottom:6px;">
-        運営：<span>個人開発（@Yoduru_M41）</span> ／ お問い合わせ：<span>nomidoki.support@gmail.com</span> ／ ver.1.0
+        運営：ノミドキ（Nomidoki） ／ お問い合わせ：support@example.com
       </p>
       <p>© 2026 ノミドキ（Nomidoki） All rights reserved. 本サービスは医療行為・診断・処方を提供するものではありません。</p>
     </div>
   </footer>
+
+  <script>
+    const FAQ_ITEMS = [
+      {
+        id: 'q-account',
+        category: 'アカウント・データ',
+        question: '会員登録前に試すことはできますか？また、無料会員登録時の確認メールについて教えてください',
+        paragraphs: [
+          'はい。トップページの「ゲストでお試し（サンプル付）」から、サンプルのお薬・サプリが登録された状態ですぐに操作感をお試しいただけます。',
+          '継続利用やクラウド同期（スマホ・PC間でのデータ共有）を行うには無料会員登録（メールアドレス認証）が必要です。ゲストモードで体験したデータは、そのまま無料会員登録を行うとクラウドへ引き継ぐことができます。',
+          '新規登録後に確認メールが届かない場合は、迷惑メールフォルダをご確認いただくか、ログイン後の画面上部に表示される「確認メールを再送信」ボタンから再送をお試しください。'
+        ],
+        tip: '',
+        defaultOpen: false
+      },
+      {
+        id: 'q-password',
+        category: 'アカウント・データ',
+        question: '新規会員登録時のパスワードのルールを教えてください',
+        paragraphs: [
+          'セキュリティ保護のため、新規会員登録時は「6文字以上」かつ「半角英字（A〜Z / a〜z）と半角数字（0〜9）の2種類を組み合わせる（全角文字・スペース不可）」形式でパスワードを設定していただきます。',
+          '入力欄右端の目玉アイコンをタップすると、入力中のパスワードを一時的に表示して打ち間違いを確認できます。'
+        ],
+        tip: '',
+        defaultOpen: false
+      },
+      {
+        id: 'q-sync',
+        category: 'アカウント・データ',
+        question: 'スマホとパソコンの両方で同じデータを同期できますか？',
+        paragraphs: [
+          'はい。無料会員登録（メールアドレス・パスワード）を行ってログインすると、服薬データや残薬数がクラウド（Firebase）に自動保存されます。',
+          '別のスマートフォンやパソコンのブラウザから同じメールアドレスでログインするだけで、最新の服薬状況や履歴がリアルタイムに同期されます。'
+        ],
+        tip: '',
+        defaultOpen: false
+      },
+      {
+        id: 'q-backup',
+        category: 'アカウント・データ',
+        question: 'データのバックアップや、退会（アカウント完全削除）はできますか？',
+        paragraphs: [
+          'アプリ内の「設定・規約」タブにある「JSONファイルに書き出す」から、登録中のお薬・サプリと服薬履歴をいつでも端末にバックアップ保存できます（保存したファイルからの復元にも対応）。',
+          'また、同じく「設定・規約」タブ下部の「アカウントと全データを完全に削除する」から、クラウド上の服薬データおよびアカウント情報をいつでも完全に削除できます。'
+        ],
+        tip: '',
+        defaultOpen: false
+      }
+    ];
+
+    let selectedFaqCategory = 'all';
+    let faqSearchKeyword = '';
+    let forceOpenState = null;
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function renderFaqCategoryTabs() {
+      const container = document.getElementById('faq-category-tabs');
+      if (!container) return;
+
+      const categories = ['all', ...Array.from(new Set(FAQ_ITEMS.map((item) => item.category)))];
+      container.innerHTML = categories
+        .map((cat) => {
+          const isAll = cat === 'all';
+          const count = isAll
+            ? FAQ_ITEMS.length
+            : FAQ_ITEMS.filter((item) => item.category === cat).length;
+          const label = isAll ? `すべて（${count}）` : `${cat}（${count}）`;
+          const isActive = selectedFaqCategory === cat;
+          return `
+            <button type="button" class="category-tab-btn ${isActive ? 'active' : ''}" onclick="selectFaqCategory('${escapeHtml(cat)}')">
+              ${escapeHtml(label)}
+            </button>
+          `;
+        })
+        .join('');
+    }
+
+    function selectFaqCategory(cat) {
+      selectedFaqCategory = cat;
+      forceOpenState = null;
+      renderFaqCategoryTabs();
+      renderFaqList();
+    }
+
+    function handleFaqSearch(val) {
+      faqSearchKeyword = (val || '').trim().toLowerCase();
+      forceOpenState = faqSearchKeyword ? true : null;
+      renderFaqList();
+    }
+
+    function toggleAllFaqItems(shouldOpen) {
+      forceOpenState = shouldOpen;
+      document.querySelectorAll('#faq-list-container details.faq-item').forEach((el) => {
+        el.open = shouldOpen;
+      });
+    }
+
+    function resetFaqFilters() {
+      selectedFaqCategory = 'all';
+      faqSearchKeyword = '';
+      forceOpenState = null;
+      const input = document.getElementById('faq-search-input');
+      if (input) input.value = '';
+      renderFaqCategoryTabs();
+      renderFaqList();
+    }
+
+    function renderFaqList() {
+      const container = document.getElementById('faq-list-container');
+      const countLabel = document.getElementById('faq-count-label');
+      if (!container) return;
+
+      const hashId = (window.location.hash || '').replace(/^#/, '');
+
+      const filtered = FAQ_ITEMS.filter((item) => {
+        if (selectedFaqCategory !== 'all' && item.category !== selectedFaqCategory) return false;
+        if (faqSearchKeyword) {
+          const text = [item.question, item.category, ...item.paragraphs, item.tip || '']
+            .join(' ')
+            .toLowerCase();
+          if (!text.includes(faqSearchKeyword)) return false;
+        }
+        return true;
+      });
+
+      if (countLabel) {
+        countLabel.textContent =
+          selectedFaqCategory === 'all' && !faqSearchKeyword
+            ? `全${filtered.length}件のQ&Aを表示中`
+            : `該当Q&A：${filtered.length}件（全${FAQ_ITEMS.length}件中）`;
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div style="background:#ffffff; border:1px solid var(--border-soft); border-radius:16px; padding:32px; text-align:center;">
+            <p style="font-weight:800; color:var(--text-secondary); margin-bottom:10px;">
+              検索条件に一致するQ&amp;Aが見つかりませんでした
+            </p>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="resetFaqFilters()">絞り込みをリセットする</button>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered
+        .map((item) => {
+          const isOpen =
+            hashId === item.id
+              ? true
+              : forceOpenState !== null
+              ? forceOpenState
+              : Boolean(item.defaultOpen);
+
+          return `
+            <details class="faq-item" id="${escapeHtml(item.id)}" ${isOpen ? 'open' : ''}>
+              <summary class="faq-question">
+                <span class="faq-q-left">
+                  <span class="faq-q-badge">Q</span>
+                  <span class="faq-q-text-wrap">
+                    <span style="display:block; margin-bottom:4px;">
+                      <span class="badge badge-cat">${escapeHtml(item.category)}</span>
+                    </span>
+                    <span>${escapeHtml(item.question)}</span>
+                  </span>
+                </span>
+                <span class="faq-chevron" aria-hidden="true">▼</span>
+              </summary>
+              <div class="faq-answer">
+                ${item.paragraphs.map((p) => `<p>${escapeHtml(p)}</p>`).join('')}
+                ${item.tip ? `<div class="faq-tip-box">💡 ポイント：${escapeHtml(item.tip)}</div>` : ''}
+              </div>
+            </details>
+          `;
+        })
+        .join('');
+    }
+
+    function initFaqPage() {
+      renderFaqCategoryTabs();
+      renderFaqList();
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initFaqPage);
+    } else {
+      initFaqPage();
+    }
+  </script>
 </body>
 </html>

@@ -3,14 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="description" content="ノミドキ（Nomidoki）は、毎日のお薬の飲み時と服用履歴をかんたん・シンプルに記録・確認できる無料Webアプリです。登録不要・スマホ対応。" />
-  <title>ノミドキ（Nomidoki）｜毎日のお薬の飲み時・服用記録Webアプリ</title>
+  <meta name="description" content="ノミドキ（Nomidoki）は、処方薬・市販薬の服用スケジュールと残薬管理、サプリメントの栄養特性に基づく参考タイミング・成分重複チェックができる無料クラウド服薬管理Webアプリです。" />
+  <title>ノミドキ（Nomidoki）｜お薬・サプリの飲み時と残薬をクラウド管理</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet" />
 
   <style>
+    /* ==========================================================================
+       1. デザインシステム変数（完全レスポンシブ・単一ファイル完結）
+       ========================================================================== */
     :root {
       --primary: #0d9488;
       --primary-hover: #0f766e;
@@ -29,7 +32,7 @@
       --border-color: #cbd5e1;
       --border-soft: #e2e8f0;
 
-      --success: #059669;
+      --success: #047857;
       --success-bg: #ecfdf5;
       --success-border: #a7f3d0;
 
@@ -42,6 +45,10 @@
       --danger-bg: #fff1f2;
       --danger-border: #fecdd3;
 
+      --purple: #6d28d9;
+      --purple-bg: #f5f3ff;
+      --purple-border: #ddd6fe;
+
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 16px;
@@ -49,10 +56,14 @@
       --radius-full: 9999px;
 
       --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
-      --shadow-sm: 0 3px 10px rgba(13, 148, 136, 0.07);
-      --shadow-md: 0 10px 24px rgba(13, 148, 136, 0.11);
+      --shadow-sm: 0 3px 10px rgba(13, 148, 136, 0.08);
+      --shadow-md: 0 10px 26px rgba(13, 148, 136, 0.12);
+      --shadow-lg: 0 20px 44px rgba(15, 23, 42, 0.16);
     }
 
+    /* ==========================================================================
+       2. リセット＆ベーススタイル
+       ========================================================================== */
     *, *::before, *::after {
       box-sizing: border-box;
       margin: 0;
@@ -68,7 +79,7 @@
       font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
       background-color: var(--page-bg);
       color: var(--text-main);
-      line-height: 1.75;
+      line-height: 1.7;
       overflow-x: hidden;
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
@@ -88,6 +99,7 @@
 
     a {
       color: var(--primary-hover);
+      text-decoration: underline;
     }
 
     .hidden {
@@ -96,30 +108,37 @@
 
     .container {
       width: 100%;
-      max-width: 960px;
+      max-width: 1040px;
       margin: 0 auto;
       padding: 0 16px;
     }
 
-    /* ボタン共通 */
+    /* ==========================================================================
+       3. ボタン＆フォーム共通UI
+       ========================================================================== */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
       gap: 7px;
-      min-height: 44px;
+      min-height: 46px;
       padding: 10px 18px;
       border-radius: var(--radius-md);
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.92rem;
       line-height: 1.3;
-      transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+      transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease, box-shadow 0.15s ease;
       text-decoration: none;
       white-space: nowrap;
     }
 
-    .btn:active {
+    .btn:active:not(:disabled) {
       transform: scale(0.98);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
     }
 
     .btn-sm {
@@ -127,6 +146,13 @@
       padding: 7px 14px;
       font-size: 0.82rem;
       border-radius: var(--radius-sm);
+    }
+
+    .btn-lg {
+      min-height: 52px;
+      padding: 14px 26px;
+      font-size: 1rem;
+      border-radius: var(--radius-lg);
     }
 
     .btn-block {
@@ -139,7 +165,7 @@
       box-shadow: 0 3px 10px rgba(13, 148, 136, 0.28);
     }
 
-    .btn-primary:hover {
+    .btn-primary:hover:not(:disabled) {
       background-color: var(--primary-hover);
     }
 
@@ -149,7 +175,7 @@
       border: 2px solid var(--primary-border);
     }
 
-    .btn-secondary:hover {
+    .btn-secondary:hover:not(:disabled) {
       background-color: var(--primary-light);
       border-color: var(--primary);
     }
@@ -160,7 +186,7 @@
       border: 1.5px solid var(--border-color);
     }
 
-    .btn-outline:hover {
+    .btn-outline:hover:not(:disabled) {
       background-color: var(--surface-muted);
       border-color: #94a3b8;
     }
@@ -170,22 +196,128 @@
       color: var(--text-secondary);
     }
 
-    .btn-ghost:hover {
+    .btn-ghost:hover:not(:disabled) {
       background-color: var(--primary-light);
       color: var(--primary-hover);
     }
 
+    .btn-danger {
+      background-color: var(--danger);
+      color: #ffffff;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+      background-color: #9f1239;
+    }
+
     .btn-danger-outline {
-      background-color: var(--surface);
+      background-color: var(--danger-bg);
       color: var(--danger);
       border: 1.5px solid var(--danger-border);
     }
 
-    .btn-danger-outline:hover {
-      background-color: var(--danger-bg);
+    .btn-danger-outline:hover:not(:disabled) {
+      background-color: #ffe4e6;
     }
 
-    /* ヘッダー */
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 6px;
+    }
+
+    .form-hint {
+      font-size: 0.77rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .form-input, .form-select, .form-textarea {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background-color: #ffffff;
+      color: var(--text-main);
+      font-size: 0.95rem;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .form-input:focus, .form-select:focus, .form-textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.16);
+    }
+
+    .form-textarea {
+      min-height: 92px;
+      resize: vertical;
+    }
+
+    .password-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .password-input-wrap .form-input {
+      padding-right: 48px;
+    }
+
+    .password-toggle-btn {
+      position: absolute;
+      right: 6px;
+      width: 38px;
+      height: 38px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      transition: background-color 0.14s ease, color 0.14s ease;
+    }
+
+    .password-toggle-btn:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-hover);
+    }
+
+    /* パスワード設定ルールチェックリスト */
+    .pw-rules-box {
+      margin-top: 8px;
+      padding: 10px 12px;
+      background-color: var(--surface-muted);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 0.78rem;
+    }
+
+    .pw-rule-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--text-muted);
+      font-weight: 700;
+      transition: color 0.15s ease;
+    }
+
+    .pw-rule-item.valid {
+      color: var(--success);
+    }
+
+    /* ==========================================================================
+       4. ヘッダー＆ナビゲーション
+       ========================================================================== */
     .site-header {
       background-color: rgba(255, 255, 255, 0.98);
       border-bottom: 1px solid var(--border-soft);
@@ -226,7 +358,7 @@
     }
 
     .brand-title {
-      font-size: 1.18rem;
+      font-size: 1.2rem;
       font-weight: 800;
       letter-spacing: -0.02em;
       color: var(--text-main);
@@ -239,409 +371,969 @@
       color: var(--primary-hover);
     }
 
-    .header-nav {
+    .header-nav-links {
+      display: none;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .header-nav-links a {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-decoration: none;
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+    }
+
+    .header-nav-links a:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-hover);
+    }
+
+    @media (min-width: 820px) {
+      .header-nav-links {
+        display: flex;
+      }
+    }
+
+    .header-actions {
       display: flex;
       align-items: center;
-      gap: 6px;
+      gap: 8px;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
 
-    /* ヒーローセクション */
-    .hero-section {
-      background: radial-gradient(circle at top right, #ccfbf1 0%, #f0fdfa 45%, #ffffff 100%);
-      padding: 36px 0 32px;
-      border-bottom: 1px solid var(--border-soft);
-    }
-
-    .hero-badge {
+    .user-pill {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-size: 0.75rem;
+      padding: 6px 12px;
+      border-radius: var(--radius-full);
+      background-color: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      color: var(--primary-dark);
+      font-size: 0.8rem;
       font-weight: 800;
-      color: var(--primary-hover);
+      max-width: 240px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    /* ==========================================================================
+       5. LP（未ログイン時トップページ）
+       ========================================================================== */
+    .hero-section {
+      background: radial-gradient(circle at top right, #ccfbf1 0%, #f0fdfa 45%, #ffffff 100%);
+      padding: 44px 0 40px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+
+    @media (min-width: 860px) {
+      .hero-grid {
+        grid-template-columns: 1.2fr 0.8fr;
+      }
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 13px;
+      border-radius: var(--radius-full);
       background-color: #ffffff;
       border: 1px solid var(--primary-border);
-      padding: 4px 12px;
-      border-radius: var(--radius-full);
-      margin-bottom: 12px;
+      color: var(--primary-hover);
+      font-size: 0.78rem;
+      font-weight: 800;
+      margin-bottom: 14px;
+      box-shadow: var(--shadow-xs);
     }
 
     .hero-title {
-      font-size: clamp(1.5rem, 3.8vw, 2.2rem);
+      font-size: clamp(1.6rem, 4vw, 2.35rem);
       font-weight: 800;
-      line-height: 1.35;
+      line-height: 1.32;
       color: var(--text-main);
-      margin-bottom: 12px;
+      margin-bottom: 14px;
+      letter-spacing: -0.02em;
     }
 
-    .hero-lead {
-      font-size: 0.96rem;
+    .hero-title span {
+      color: var(--primary-hover);
+    }
+
+    .hero-desc {
+      font-size: 0.98rem;
       color: var(--text-secondary);
-      max-width: 720px;
-      margin-bottom: 20px;
+      margin-bottom: 24px;
     }
 
     .hero-cta-row {
       display: flex;
       flex-wrap: wrap;
-      gap: 10px;
-      align-items: center;
-    }
-
-    /* アプリ本体セクション */
-    .app-section {
-      padding: 28px 0 36px;
-    }
-
-    .app-card {
-      background-color: var(--surface);
-      border: 1px solid var(--border-soft);
-      border-radius: var(--radius-xl);
-      padding: clamp(18px, 3.2vw, 26px);
-      margin-bottom: 20px;
-      box-shadow: var(--shadow-sm);
-    }
-
-    .date-header-bar {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
       gap: 12px;
-      padding-bottom: 16px;
-      margin-bottom: 18px;
-      border-bottom: 1px solid var(--border-soft);
-    }
-
-    .logical-date-title {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: var(--text-main);
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .logical-note {
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      margin-top: 2px;
-    }
-
-    .progress-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background-color: var(--primary-light);
-      border: 1.5px solid var(--primary-border);
-      color: var(--primary-dark);
-      padding: 6px 14px;
-      border-radius: var(--radius-full);
-      font-size: 0.85rem;
-      font-weight: 800;
-    }
-
-    /* タイミングタブ */
-    .timing-tabs {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      padding-bottom: 6px;
-      margin-bottom: 18px;
-    }
-
-    .timing-tab {
-      padding: 8px 14px;
-      border-radius: var(--radius-full);
-      border: 1.5px solid var(--border-soft);
-      background-color: var(--surface-muted);
-      font-size: 0.84rem;
-      font-weight: 700;
-      color: var(--text-secondary);
-      white-space: nowrap;
-      transition: all 0.15s ease;
-    }
-
-    .timing-tab.active {
-      background-color: var(--primary);
-      border-color: var(--primary);
-      color: #ffffff;
-    }
-
-    /* お薬カードリスト */
-    .med-list {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-
-    .med-item {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 14px;
-      padding: 16px;
-      border-radius: var(--radius-lg);
-      border: 1.5px solid var(--border-soft);
-      background-color: var(--surface);
-      transition: border-color 0.15s ease, background-color 0.15s ease;
-    }
-
-    .med-item.taken {
-      background-color: var(--success-bg);
-      border-color: var(--success-border);
-    }
-
-    .med-info {
-      flex: 1;
-      min-width: 0;
-    }
-
-    .med-badges {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: 6px;
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 2px 10px;
-      border-radius: var(--radius-full);
-      font-size: 0.74rem;
-      font-weight: 800;
-    }
-
-    .badge-timing {
-      background-color: var(--primary-light);
-      color: var(--primary-dark);
-      border: 1px solid var(--primary-border);
-    }
-
-    .badge-cycle {
-      background-color: var(--surface-muted);
-      color: var(--text-secondary);
-      border: 1px solid var(--border-color);
-    }
-
-    .badge-taken {
-      background-color: var(--success);
-      color: #ffffff;
-    }
-
-    .med-name {
-      font-size: 1.05rem;
-      font-weight: 800;
-      color: var(--text-main);
-      word-break: break-word;
-    }
-
-    .med-meta {
-      font-size: 0.82rem;
-      color: var(--text-secondary);
-      margin-top: 3px;
-    }
-
-    .med-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      flex-shrink: 0;
-    }
-
-    .empty-state {
-      text-align: center;
-      padding: 36px 16px;
-      background-color: var(--surface-muted);
-      border: 1.5px dashed var(--border-color);
-      border-radius: var(--radius-lg);
-      color: var(--text-secondary);
-    }
-
-    /* フォーム要素 */
-    .form-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 14px;
-      margin-bottom: 14px;
-    }
-
-    .form-group {
       margin-bottom: 12px;
     }
 
-    .form-label {
-      display: block;
-      font-size: 0.84rem;
-      font-weight: 800;
-      color: var(--text-main);
-      margin-bottom: 5px;
-    }
-
-    .form-input, .form-select {
-      width: 100%;
-      min-height: 44px;
-      padding: 9px 13px;
-      border: 1.5px solid var(--border-color);
-      border-radius: var(--radius-md);
+    .hero-card {
       background-color: #ffffff;
-      font-size: 0.92rem;
+      border: 1px solid var(--primary-border);
+      border-radius: var(--radius-xl);
+      padding: 22px;
+      box-shadow: var(--shadow-md);
     }
 
-    .form-input:focus, .form-select:focus {
-      outline: none;
-      border-color: var(--primary);
-      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.16);
+    .lp-section {
+      padding: 42px 0;
     }
 
-    /* 記事・LP解説セクション */
-    .info-section {
-      padding: 12px 0 40px;
+    .lp-section-alt {
+      background-color: #ffffff;
+      border-top: 1px solid var(--border-soft);
+      border-bottom: 1px solid var(--border-soft);
     }
 
-    .section-heading {
-      font-size: 1.32rem;
+    .section-header {
+      text-align: center;
+      max-width: 720px;
+      margin: 0 auto 28px;
+    }
+
+    .section-eyebrow {
+      display: inline-block;
+      font-size: 0.75rem;
       font-weight: 800;
-      color: var(--text-main);
+      color: var(--primary-hover);
+      background-color: var(--primary-light);
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
       margin-bottom: 8px;
     }
 
-    .section-sub {
-      font-size: 0.9rem;
-      color: var(--text-secondary);
-      margin-bottom: 20px;
+    .section-title {
+      font-size: clamp(1.3rem, 3vw, 1.72rem);
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.35;
+      margin-bottom: 8px;
     }
 
-    .feature-grid {
+    .section-lead {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+    }
+
+    .features-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    @media (max-width: 820px) {
+      .features-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     .feature-card {
       background-color: var(--surface);
       border: 1px solid var(--border-soft);
       border-radius: var(--radius-lg);
-      padding: 20px;
+      padding: 22px;
       box-shadow: var(--shadow-xs);
     }
 
-    .feature-card h3 {
-      font-size: 1.02rem;
-      font-weight: 800;
-      color: var(--primary-dark);
-      margin-bottom: 8px;
-    }
-
-    .feature-card p {
-      font-size: 0.87rem;
-      color: var(--text-secondary);
-    }
-
-    .doc-box {
-      background-color: var(--surface);
-      border: 1px solid var(--border-soft);
-      border-radius: var(--radius-xl);
-      padding: clamp(20px, 3.5vw, 28px);
-      margin-bottom: 20px;
-    }
-
-    .doc-box h2 {
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: var(--text-main);
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      background-color: var(--primary-light);
+      color: var(--primary-hover);
+      display: flex;
+      align-items: center;
+      justify-content: center;
       margin-bottom: 12px;
-      padding-bottom: 10px;
-      border-bottom: 1px solid var(--border-soft);
     }
 
-    .doc-box p, .doc-box li {
-      font-size: 0.88rem;
-      color: var(--text-secondary);
-      margin-bottom: 8px;
+    /* コラムカード（最新3記事＆よく読まれる3記事） */
+    .column-group-block {
+      margin-bottom: 26px;
     }
 
-    .doc-box ul {
-      margin-left: 20px;
-      margin-bottom: 10px;
+    .column-group-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 12px;
     }
 
-    .disclaimer-alert {
-      background-color: var(--warning-bg);
-      border: 1.5px solid var(--warning-border);
-      border-radius: var(--radius-lg);
-      padding: 18px 20px;
-      color: var(--warning-text);
-      margin-bottom: 20px;
-    }
-
-    .disclaimer-alert h2 {
+    .column-group-title {
       font-size: 1.05rem;
       font-weight: 800;
-      margin-bottom: 8px;
-      color: var(--warning-text);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
-    .disclaimer-alert p {
-      font-size: 0.87rem;
+    .column-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    @media (max-width: 860px) {
+      .column-cards-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .column-card {
+      background-color: var(--surface);
+      border: 1.5px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 12px;
+      box-shadow: var(--shadow-xs);
+      text-decoration: none;
+      color: inherit;
+      transition: transform 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    .column-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .column-card h3 {
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.5;
       margin-bottom: 6px;
     }
 
-    .policy-operator-block {
+    .column-card p {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      line-height: 1.65;
+    }
+
+    .badge-new {
+      background-color: var(--primary);
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .badge-rank-1 {
+      background-color: #fef3c7;
+      color: #92400e;
+      border: 1px solid #f59e0b;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .badge-rank-2 {
+      background-color: #f1f5f9;
+      color: #334155;
+      border: 1px solid #94a3b8;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    .badge-rank-3 {
+      background-color: #ffedd5;
+      color: #9a3412;
+      border: 1px solid #fb923c;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+
+    /* ==========================================================================
+       6. 免責事項・法的ドキュメント・お問い合わせフォーム
+       ========================================================================== */
+    .disclaimer-card {
+      background-color: var(--warning-bg);
+      border: 2px solid var(--warning-border);
+      border-radius: var(--radius-xl);
+      padding: 22px 24px;
+      color: var(--warning-text);
+    }
+
+    .disclaimer-card h3 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .disclaimer-card ul {
+      margin-left: 20px;
+      font-size: 0.86rem;
+      line-height: 1.75;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .legal-doc-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 22px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .legal-doc-card h3 {
+      font-size: 1.06rem;
+      font-weight: 800;
+      color: var(--text-main);
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .legal-doc-card h4 {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin: 14px 0 6px;
+    }
+
+    .legal-doc-card p, .legal-doc-card li {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      line-height: 1.75;
+    }
+
+    .legal-doc-card ul {
+      margin-left: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .operator-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.85rem;
+    }
+
+    .operator-table th, .operator-table td {
+      padding: 10px 12px;
+      border: 1px solid var(--border-soft);
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .operator-table th {
+      width: 30%;
+      background-color: var(--surface-muted);
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    /* ==========================================================================
+       7. アプリ本体（ログイン後 / ゲストモード）
+       ========================================================================== */
+    .app-shell {
+      padding: 18px 0 88px;
+    }
+
+    .guest-banner {
+      background-color: var(--warning-bg);
+      border: 1.5px solid var(--warning-border);
+      border-radius: var(--radius-lg);
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.85rem;
+      color: var(--warning-text);
+    }
+
+    .app-tabs-desktop {
+      display: flex;
+      gap: 8px;
+      background-color: var(--surface);
+      padding: 6px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-soft);
+      margin-bottom: 18px;
+      overflow-x: auto;
+    }
+
+    .app-tab-btn {
+      flex: 1;
+      min-width: 120px;
+      min-height: 44px;
+      padding: 8px 14px;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: var(--text-secondary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+
+    .app-tab-btn:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-hover);
+    }
+
+    .app-tab-btn.active {
+      background-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(13, 148, 136, 0.25);
+    }
+
+    .mobile-bottom-nav {
+      display: none;
+    }
+
+    @media (max-width: 767px) {
+      .app-tabs-desktop {
+        display: none;
+      }
+
+      .mobile-bottom-nav {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        z-index: 35;
+        background-color: rgba(255, 255, 255, 0.98);
+        border-top: 1px solid var(--border-soft);
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        padding: 4px 2px calc(4px + env(safe-area-inset-bottom));
+        box-shadow: 0 -2px 10px rgba(15, 23, 42, 0.06);
+      }
+
+      .mobile-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 2px;
+        min-height: 54px;
+        font-size: 0.68rem;
+        font-weight: 800;
+        color: var(--text-muted);
+        border-radius: var(--radius-sm);
+      }
+
+      .mobile-nav-item.active {
+        color: var(--primary-hover);
+        background-color: var(--primary-light);
+      }
+    }
+
+    .card {
+      background-color: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .card-title {
+      font-size: 1.06rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    @media (max-width: 767px) {
+      .summary-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .summary-box {
+      background-color: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 14px 16px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .summary-label {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+
+    .summary-value {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.2;
+    }
+
+    .filter-pills {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .filter-pill {
+      min-height: 36px;
+      padding: 5px 14px;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-color);
+      background-color: #ffffff;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+    }
+
+    .filter-pill.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      font-size: 0.72rem;
+      font-weight: 800;
+      line-height: 1.3;
+    }
+
+    .badge-rx {
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .badge-otc {
+      background-color: #fef3c7;
+      color: #b45309;
+    }
+
+    .badge-supp {
+      background-color: var(--purple-bg);
+      color: var(--purple);
+    }
+
+    .badge-freq {
+      background-color: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+
+    .badge-retro {
+      background-color: #fffbeb;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    .badge-low {
+      background-color: var(--danger-bg);
+      color: var(--danger);
+      border: 1px solid var(--danger-border);
+    }
+
+    .slot-section {
+      background-color: var(--surface);
+      border: 1.5px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+
+    .slot-section.is-next-slot {
+      border-color: var(--primary);
+      box-shadow: 0 4px 14px rgba(13, 148, 136, 0.14);
+    }
+
+    .slot-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 12px;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed var(--border-soft);
+    }
+
+    .slot-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      border-radius: var(--radius-md);
+      background-color: var(--surface-muted);
+      border: 1px solid var(--border-soft);
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+
+    .slot-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .slot-item.is-taken {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+    }
+
+    /* 選択チップ（種別・頻度・栄養カテゴリ・タイミング） */
+    .chip-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .select-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      min-height: 40px;
+      padding: 7px 13px;
+      border-radius: var(--radius-md);
+      border: 1.5px solid var(--border-color);
+      background-color: #ffffff;
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      transition: all 0.14s ease;
+    }
+
+    .select-chip:hover {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+    }
+
+    .select-chip.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .alert-box {
+      padding: 13px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      line-height: 1.65;
+      margin-bottom: 14px;
+    }
+
+    .alert-warning {
+      background-color: var(--warning-bg);
+      border: 1.5px solid var(--warning-border);
+      color: var(--warning-text);
+    }
+
+    .alert-purple {
+      background-color: var(--purple-bg);
+      border: 1.5px solid var(--purple-border);
+      color: #4c1d95;
+    }
+
+    .alert-info {
+      background-color: var(--primary-light);
+      border: 1.5px solid var(--primary-border);
+      color: var(--primary-dark);
+    }
+
+    /* ==========================================================================
+       8. 服薬履歴カレンダー＆タイムライン
+       ========================================================================== */
+    .calendar-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+
+    .calendar-grid {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 4px;
+    }
+
+    .calendar-weekday {
+      text-align: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      padding: 6px 0;
+    }
+
+    .calendar-day {
+      min-height: 62px;
+      padding: 5px 4px;
+      border-radius: var(--radius-sm);
+      border: 1.5px solid var(--border-soft);
+      background-color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      transition: all 0.12s ease;
+    }
+
+    .calendar-day:hover:not(.empty) {
+      border-color: var(--primary);
+      background-color: var(--primary-light);
+    }
+
+    .calendar-day.empty {
+      background-color: transparent;
+      border-color: transparent;
+      cursor: default;
+    }
+
+    .calendar-day.is-today {
+      border-color: var(--primary);
+      font-weight: 800;
+    }
+
+    .calendar-day.is-selected {
+      background-color: var(--primary-light);
+      border: 2px solid var(--primary-dark);
+    }
+
+    .cal-pill {
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 1px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+
+    .cal-pill-done {
+      background-color: var(--success-bg);
+      color: var(--success);
+    }
+
+    .cal-pill-partial {
+      background-color: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .cal-pill-plan {
+      background-color: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .timeline-list {
+      border-left: 2.5px solid var(--primary-border);
+      margin-left: 10px;
+      padding-left: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .timeline-entry {
+      position: relative;
       background-color: var(--surface-muted);
       border: 1px solid var(--border-soft);
       border-radius: var(--radius-md);
-      padding: 14px 16px;
-      margin-top: 12px;
-      font-size: 0.86rem;
+      padding: 10px 14px;
     }
 
-    /* トースト＆モーダル */
-    .toast {
-      position: fixed;
-      top: 78px;
-      right: 16px;
-      z-index: 60;
-      background-color: var(--primary-dark);
-      color: #ffffff;
-      border-left: 4px solid #34d399;
-      padding: 12px 16px;
-      border-radius: var(--radius-md);
-      font-size: 0.86rem;
+    .timeline-entry::before {
+      content: "";
+      position: absolute;
+      left: -22px;
+      top: 15px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      border: 2px solid #ffffff;
+    }
+
+    /* ==========================================================================
+       9. 広告枠＆モーダル＆トースト＆フッター
+       ========================================================================== */
+    .ad-slot-wrapper {
+      margin: 24px 0 8px;
+      padding: 14px 16px;
+      background-color: var(--surface);
+      border: 1px dashed #cbd5e1;
+      border-radius: var(--radius-lg);
+    }
+
+    .ad-slot-label {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.72rem;
       font-weight: 700;
-      box-shadow: var(--shadow-md);
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    .ad-tag {
+      background-color: var(--primary-subtle);
+      color: var(--primary-dark);
+      padding: 2px 7px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      font-weight: 800;
     }
 
     .modal-backdrop {
       position: fixed;
       inset: 0;
-      background-color: rgba(15, 23, 42, 0.55);
+      z-index: 50;
+      background-color: rgba(15, 23, 42, 0.56);
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 16px;
-      z-index: 50;
+      overflow-y: auto;
     }
 
-    .modal-panel {
-      background-color: var(--surface);
+    .modal-dialog {
+      background-color: #ffffff;
       border-radius: var(--radius-xl);
       width: 100%;
-      max-width: 480px;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
       padding: 24px;
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--shadow-lg);
     }
 
-    /* フッター */
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .modal-title {
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .modal-close-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-close-btn:hover {
+      background-color: var(--surface-muted);
+      color: var(--text-main);
+    }
+
+    .toast-container {
+      position: fixed;
+      top: 78px;
+      right: 16px;
+      z-index: 60;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: calc(100vw - 32px);
+    }
+
+    .toast {
+      background-color: var(--text-main);
+      color: #ffffff;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.86rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-md);
+      animation: fadeInToast 0.18s ease;
+    }
+
+    .toast.success {
+      background-color: var(--primary-dark);
+      border-left: 4px solid #34d399;
+    }
+
+    .toast.warning {
+      background-color: #78350f;
+      border-left: 4px solid #fbbf24;
+    }
+
+    @keyframes fadeInToast {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     .site-footer {
       background-color: var(--primary-dark);
       color: #ccfbf1;
-      padding: 32px 0 44px;
+      padding: 36px 0 48px;
       font-size: 0.82rem;
     }
 
@@ -655,33 +1347,19 @@
     .footer-links a {
       color: #ffffff;
       font-weight: 700;
-      text-decoration: underline;
       font-size: 0.84rem;
-    }
-
-    .footer-links a:hover {
-      color: #99f6e4;
-    }
-
-    @media (max-width: 640px) {
-      .med-item {
-        flex-direction: column;
-        align-items: stretch;
-      }
-      .med-actions {
-        justify-content: flex-end;
-      }
     }
   </style>
 </head>
 <body>
 
-  <div id="toast-box" class="toast hidden" role="status" aria-live="polite"></div>
+  <!-- トースト通知 -->
+  <div class="toast-container" id="toast-container" aria-live="polite"></div>
 
   <!-- 共通ヘッダー -->
   <header class="site-header">
     <div class="container header-inner">
-      <a href="index.html" class="brand">
+      <a href="#top" class="brand" onclick="handleBrandClick(event)">
         <div class="brand-icon" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="9"></circle>
@@ -690,511 +1368,2949 @@
         </div>
         <div>
           <div class="brand-title">ノミドキ</div>
-          <div class="brand-sub">NOMIDOKI MEDICATION TRACKER</div>
+          <div class="brand-sub">NOMIDOKI HEALTH TRACKER</div>
         </div>
       </a>
 
-      <nav class="header-nav" aria-label="メインナビゲーション">
-        <a href="#app-workspace" class="btn btn-ghost btn-sm">記録アプリ</a>
-        <a href="columns.html" class="btn btn-ghost btn-sm">飲み時コラム</a>
-        <a href="faq.html" class="btn btn-ghost btn-sm">使い方・Q&amp;A</a>
-        <a href="contact.html" class="btn btn-outline btn-sm">お問い合わせ</a>
+      <!-- 未ログイン時のナビゲーションリンク -->
+      <nav class="header-nav-links" id="lp-header-nav" aria-label="サイト内ナビゲーション">
+        <a href="#lp-features">特徴</a>
+        <a href="columns.html">解説コラム</a>
+        <a href="faq.html">使い方・Q&amp;A</a>
+        <a href="#lp-disclaimer">医療免責</a>
+        <a href="#lp-legal">規約・ポリシー</a>
+        <a href="contact.html">お問い合わせ</a>
       </nav>
+
+      <!-- 右上アクションエリア（ログイン状態に応じて切替） -->
+      <div class="header-actions" id="header-auth-area">
+        <button type="button" class="btn btn-outline btn-sm" onclick="openAuthModal('login')">ログイン</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="openAuthModal('signup')">無料会員登録</button>
+      </div>
     </div>
   </header>
 
-  <main>
+  <!-- ==========================================================================
+       A. 未ログイン時トップページ（LP・コラムピックアップ・免責・規約・お問い合わせ）
+       ========================================================================== -->
+  <div id="landing-view">
     <!-- ヒーローセクション -->
     <section class="hero-section">
-      <div class="container">
-        <span class="hero-badge">登録不要・無料・ブラウザですぐ使える服薬サポート</span>
-        <h1 class="hero-title">「あれ、今日のお薬飲んだっけ？」を<br />ワンタップで安心に変える。</h1>
-        <p class="hero-lead">
-          <strong>ノミドキ（Nomidoki）</strong>は、朝・昼・晩・寝る前などの「飲み時（服用タイミング）」ごとにお薬の服用状況をシンプルに記録できる無料Webアプリです。深夜4:00日付切替や隔日服用にも対応しています。
-        </p>
-        <div class="hero-cta-row">
-          <a href="#app-workspace" class="btn btn-primary">今すぐ今日の服薬を記録する</a>
-          <a href="columns.html" class="btn btn-secondary">「食前・食後・食間」の正しい飲み方を読む</a>
+      <div class="container hero-grid">
+        <div>
+          <span class="hero-eyebrow">⏰ 毎日・隔日・週1のお薬＆サプリを一元管理</span>
+          <h1 class="hero-title">
+            お薬の飲み忘れを防ぎ、<br />
+            <span>サプリの「飲み時」</span>も迷わない。
+          </h1>
+          <p class="hero-desc">
+            処方薬・市販薬はお薬袋の指示どおりに毎日・隔日・週1回まで柔軟にスケジュール管理。サプリメントは市販成分カテゴリに応じた参考タイミング表示や成分重複チェックも無料で使えます。
+          </p>
+          <div class="hero-cta-row">
+            <button type="button" class="btn btn-primary btn-lg" onclick="openAuthModal('signup')">
+              無料会員登録して始める
+            </button>
+            <button type="button" class="btn btn-secondary btn-lg" onclick="openGuestConfirmModal()">
+              ゲストでお試し（サンプル付）
+            </button>
+            <button type="button" class="btn btn-outline btn-lg" onclick="openAuthModal('login')">
+              ログイン
+            </button>
+          </div>
+          <p style="font-size:0.78rem; color:var(--text-muted);">
+            ※ 実際の服薬データのクラウド保存・マルチデバイス同期には無料会員登録（メール認証）が必要です。「ゲストでお試し」ではサンプルデータ入りで操作感を体験でき、登録時にデータ引き継ぎも可能です。
+          </p>
+        </div>
+
+        <div class="hero-card">
+          <div style="font-size:0.78rem; font-weight:800; color:var(--primary-hover); margin-bottom:8px;">
+            📱 ノミドキでできること
+          </div>
+          <ul style="list-style:none; display:flex; flex-direction:column; gap:10px; font-size:0.86rem;">
+            <li style="display:flex; gap:8px; align-items:flex-start;">
+              <span style="color:var(--primary); font-weight:800;">✓</span>
+              <span><strong>ワンタップで「飲んだ！」記録：</strong>押すだけで服用時刻と残薬数を自動カウント。記録忘れのさかのぼり追加や取り消しも対応。</span>
+            </li>
+            <li style="display:flex; gap:8px; align-items:flex-start;">
+              <span style="color:var(--primary); font-weight:800;">✓</span>
+              <span><strong>隔日・週1・曜日指定スケジュール：</strong>毎日だけでなく1日おき・週1回の予定もカレンダーに自動反映。</span>
+            </li>
+            <li style="display:flex; gap:8px; align-items:flex-start;">
+              <span style="color:var(--primary); font-weight:800;">✓</span>
+              <span><strong>サプリ名称入力で飲み時ガイド：</strong>サプリメント名を入力すると該当成分を絞り込み、吸収特性に合わせた参考タイミングを提案。</span>
+            </li>
+            <li style="display:flex; gap:8px; align-items:flex-start;">
+              <span style="color:var(--primary); font-weight:800;">✓</span>
+              <span><strong>深夜4:00（28:00）日付切替：</strong>深夜0時を過ぎた就寝前のお薬やトレーニング後のプロテインも当日分としてそのまま記録可能。</span>
+            </li>
+          </ul>
         </div>
       </div>
     </section>
 
-    <!-- アプリ本体セクション -->
-    <section id="app-workspace" class="app-section">
+    <!-- 3つの主な特徴 -->
+    <section id="lp-features" class="lp-section">
       <div class="container">
-
-        <!-- 今日の服薬チェックボード -->
-        <div class="app-card">
-          <div class="date-header-bar">
-            <div>
-              <div class="logical-date-title">
-                <span id="logical-date-display">読み込み中...</span>
-                <span class="progress-pill" id="progress-pill">達成：0 / 0</span>
-              </div>
-              <div class="logical-note">※ 夜ふかしや寝る前の服用に配慮し、毎日 <strong>午前4:00</strong> に日付が切り替わります。</div>
-            </div>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="btn btn-secondary btn-sm" onclick="toggleAddForm()">＋ お薬を追加登録</button>
-              <button type="button" class="btn btn-outline btn-sm" onclick="openHistoryModal()">📜 履歴を見る</button>
-            </div>
-          </div>
-
-          <!-- お薬新規登録フォーム（開閉式） -->
-          <div id="add-med-panel" class="hidden" style="background:var(--primary-light); border:1.5px solid var(--primary-border); border-radius:16px; padding:18px; margin-bottom:20px;">
-            <h2 style="font-size:1rem; font-weight:800; color:var(--primary-dark); margin-bottom:12px;">新しいお薬・サプリメントを登録</h2>
-            <form id="add-med-form" onsubmit="handleAddMedication(event)">
-              <div class="form-grid">
-                <div>
-                  <label class="form-label" for="med-name-input">お薬・サプリ名 <span style="color:var(--danger);">*</span></label>
-                  <input type="text" id="med-name-input" class="form-input" placeholder="例：朝のビタミン剤、血圧の薬" required />
-                </div>
-                <div>
-                  <label class="form-label" for="med-timing-select">飲み時（タイミング）</label>
-                  <select id="med-timing-select" class="form-select">
-                    <option value="起床時">起床時</option>
-                    <option value="朝食前">朝食前</option>
-                    <option value="朝食後" selected>朝食後</option>
-                    <option value="昼食前">昼食前</option>
-                    <option value="昼食後">昼食後</option>
-                    <option value="夕食前">夕食前</option>
-                    <option value="夕食後">夕食後</option>
-                    <option value="寝る前">寝る前</option>
-                    <option value="頓服・その他">頓服・その他</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="form-label" for="med-cycle-select">服用サイクル</label>
-                  <select id="med-cycle-select" class="form-select">
-                    <option value="daily" selected>毎日</option>
-                    <option value="alternate">1日おき（隔日）</option>
-                    <option value="as_needed">必要なとき（頓服）</option>
-                  </select>
-                </div>
-                <div>
-                  <label class="form-label" for="med-dose-input">1回の量・メモ（任意）</label>
-                  <input type="text" id="med-dose-input" class="form-input" placeholder="例：1錠、食後30分以内" />
-                </div>
-              </div>
-              <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
-                <button type="button" class="btn btn-outline btn-sm" onclick="toggleAddForm()">キャンセル</button>
-                <button type="submit" class="btn btn-primary btn-sm">この内容で登録する</button>
-              </div>
-            </form>
-          </div>
-
-          <!-- タイミング絞り込みタブ -->
-          <div class="timing-tabs" role="tablist" aria-label="飲み時フィルター">
-            <button type="button" class="timing-tab active" data-filter="ALL" onclick="setTimingFilter('ALL', this)">すべて表示</button>
-            <button type="button" class="timing-tab" data-filter="朝" onclick="setTimingFilter('朝', this)">朝（起床・朝食）</button>
-            <button type="button" class="timing-tab" data-filter="昼" onclick="setTimingFilter('昼', this)">昼（昼食）</button>
-            <button type="button" class="timing-tab" data-filter="夕" onclick="setTimingFilter('夕', this)">夜（夕食）</button>
-            <button type="button" class="timing-tab" data-filter="寝る前" onclick="setTimingFilter('寝る前', this)">寝る前</button>
-            <button type="button" class="timing-tab" data-filter="頓服" onclick="setTimingFilter('頓服', this)">頓服・その他</button>
-          </div>
-
-          <!-- 今日のリスト -->
-          <div id="med-list-container" class="med-list"></div>
-
-          <!-- サンプル投入・データ管理バー -->
-          <div style="margin-top:20px; padding-top:14px; border-top:1px solid var(--border-soft); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
-            <span style="font-size:0.78rem; color:var(--text-muted);">※ 記録データはお使いの端末（ブラウザ内）に自動保存されます。</span>
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-              <button type="button" class="btn btn-ghost btn-sm" onclick="loadSampleMedications()">お試しサンプルを追加</button>
-              <button type="button" class="btn btn-danger-outline btn-sm" onclick="openResetConfirmModal()">全データ初期化</button>
-            </div>
-          </div>
+        <div class="section-header">
+          <span class="section-eyebrow">FEATURES</span>
+          <h2 class="section-title">毎日の服薬・サプリ管理を無理なく続ける工夫</h2>
+          <p class="section-lead">処方薬の安全性への配慮と、日々のセルフケアの使いやすさを両立しています。</p>
         </div>
 
+        <div class="features-grid">
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; margin-bottom:6px;">残薬カウント＆月別服薬カレンダー</h3>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">
+              「飲んだ！」ボタンを押すだけで残薬数が自動カウントされ、残り少なくなると補充アラートでお知らせ。月間カレンダーから飲んだ時刻と内容も振り返れます。
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; margin-bottom:6px;">処方薬・市販薬の安全設計</h3>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">
+              処方薬・市販薬には定められた服薬タイミングが存在するため、アプリからの自動提案は行わず、お薬袋・添付文書の指示どおりに正確に記録できる設計です。
+            </p>
+          </article>
+
+          <article class="feature-card">
+            <div class="feature-icon" aria-hidden="true">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            </div>
+            <h3 style="font-size:1rem; font-weight:800; margin-bottom:6px;">サプリメントの参考タイミング＆重複チェック</h3>
+            <p style="font-size:0.85rem; color:var(--text-secondary);">
+              サプリメント登録時は、脂溶性ビタミン・水溶性ビタミン・鉄分・乳酸菌などの特性に応じた参考タイミング表示や、複数サプリ間の成分重複アラートが役立ちます。
+            </p>
+          </article>
+        </div>
       </div>
     </section>
 
-    <!-- サービス解説・ガイドセクション -->
-    <section class="info-section">
+    <!-- 栄養成分・お薬の「飲み時」解説コラム（最新3記事＆よく読まれる3記事） -->
+    <section id="lp-column" class="lp-section lp-section-alt">
       <div class="container">
-        <h2 class="section-heading">ノミドキ（Nomidoki）の主な特徴と使い方</h2>
-        <p class="section-sub">毎日の服薬習慣を無理なく続けられるよう、シンプルさと実用性にこだわって設計しています。</p>
-
-        <div class="feature-grid">
-          <div class="feature-card">
-            <h3>1. ワンタップで服用時刻を記録</h3>
-            <p>「飲んだ！」ボタンを押すだけで、現在時刻とともに本日の服用完了が記録されます。飲み忘れや二重飲みの防止に役立ちます。</p>
-          </div>
-          <div class="feature-card">
-            <h3>2. 深夜4:00日付切替に対応</h3>
-            <p>0時を過ぎてから「寝る前のお薬」を飲む生活リズムでも、翌日分と混ざらないよう午前4時を1日の区切りとしています。</p>
-          </div>
-          <div class="feature-card">
-            <h3>3. 個人情報不要・端末内保存</h3>
-            <p>会員登録やメールアドレスの入力は一切不要です。記録したお薬情報はブラウザのローカルストレージに安全に保存されます。</p>
-          </div>
+        <div class="section-header">
+          <span class="section-eyebrow">HEALTH COLUMN</span>
+          <h2 class="section-title">栄養成分・お薬の「飲み時」解説コラム</h2>
+          <p class="section-lead">処方薬の「食前・食後・食間」の正しい意味や、ビタミン・ミネラル・乳酸菌サプリの吸収ポイントを解説しています。</p>
         </div>
 
-        <!-- 医療免責事項 -->
-        <div id="lp-disclaimer" class="disclaimer-alert">
-          <h2>⚠️ 医療免責事項（必ずお読みください）</h2>
-          <p>
-            本サービス「ノミドキ（Nomidoki）」および掲載されているコラム・解説記事は、日々の服薬スケジュール管理や一般的な健康知識の整理を目的としたセルフケア補助ツールです。
-          </p>
-          <p>
-            <strong>本サービスは医療行為、医学的診断、治療、処方、または服薬指導を提供するものではありません。</strong>
-            お薬の服用方法・用量・飲み合わせ・飲み忘れた際の対処法については、必ず主治医または調剤薬局の薬剤師の指示に従ってください。
-          </p>
+        <div id="lp-column-showcase"></div>
+
+        <div style="text-align:center; margin-top:22px; display:flex; justify-content:center; gap:12px; flex-wrap:wrap;">
+          <a href="columns.html" class="btn btn-secondary">すべてのコラム記事一覧を見る（別ページへ） →</a>
+          <a href="faq.html" class="btn btn-outline">使い方ガイド・よくある質問（Q&amp;A）を見る →</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 医療・健康情報に関する免責事項 -->
+    <section id="lp-disclaimer" class="lp-section">
+      <div class="container">
+        <div class="disclaimer-card">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span>医療・健康情報に関する免責事項（必ずお読みください）</span>
+          </h3>
+          <ul>
+            <li>「ノミドキ（Nomidoki）」（以下「本サービス」）は、利用者個人の服薬スケジュール管理・残薬カウントおよび一般的な栄養学特性の整理を目的としたセルフマネジメント補助ツールであり、医師・薬剤師による診療、診断、処方、または個別の医学的助言に代わるものではありません。</li>
+            <li>処方薬および市販薬を服用する際は、本サービスの表示内容にかかわらず、必ず主治医・かかりつけ薬剤師の指示およびお薬袋・添付文書に記載された用法・用量を最優先して遵守してください。</li>
+            <li>サプリメントに関する「飲み時」参考ガイドは一般的な栄養学上の吸収特性に基づく目安であり、特定の疾病の予防・治療・治癒効果を保証するものではありません。体調に異変を感じた場合は直ちに使用を中止し、医療機関へご相談ください。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- プライバシーポリシー・利用規約・運営者情報 -->
+    <section id="lp-legal" class="lp-section lp-section-alt">
+      <div class="container">
+        <div class="section-header">
+          <span class="section-eyebrow">LEGAL &amp; PRIVACY</span>
+          <h2 class="section-title">プライバシーポリシー・利用規約・運営者情報</h2>
+          <p class="section-lead">安心してご利用いただくための個人情報保護方針および運営情報を公開しています。</p>
         </div>
 
         <!-- プライバシーポリシー -->
-        <div id="privacy-policy-doc" class="doc-box">
-          <h2>プライバシーポリシー</h2>
+        <article id="privacy-policy-doc" class="legal-doc-card">
+          <h3>プライバシーポリシー（個人情報保護方針・外部送信規律に関する公表事項）</h3>
           <p>
-            「ノミドキ（Nomidoki）」（以下「当サービス」）は、利用者のプライバシーを尊重し、個人情報の保護に努めます。
+            <span class="site-operator-name">ノミドキ運営事務局</span>（以下「当運営」といいます）は、Webアプリケーション「ノミドキ（Nomidoki）」（以下「本サービス」）における利用者の個人情報の取扱いについて、以下のとおりプライバシーポリシーを定めます。
           </p>
+
+          <h4>1. 取得する情報と利用目的</h4>
           <ul>
-            <li><strong>端末内データの保存：</strong>当サービスに入力されたお薬名や服用履歴などのデータは、利用者ご自身のブラウザ（localStorage）内にのみ保存され、運営者のサーバーへ自動送信されることはありません。</li>
-            <li><strong>アクセス解析・広告配信について：</strong>当サービスでは、利便性向上や運営維持のためにアクセス解析ツールや第三者配信の広告サービス（Google AdSense等）を利用する場合があります。これらはCookieを使用して適切な広告を表示することがありますが、個人を特定する情報は含まれません。</li>
-            <li><strong>お問い合わせ時の情報：</strong>お問い合わせフォームまたはメールにてご連絡いただいた際のメールアドレス・お名前等は、お問い合わせへの回答および必要なご連絡のみに利用いたします。</li>
+            <li><strong>アカウント情報：</strong>メールアドレス、パスワード（暗号化処理）、表示用ニックネーム（本人確認、ログイン認証、パスワード再設定、およびお問い合わせ対応のため）。</li>
+            <li><strong>服薬・サプリメント管理データ：</strong>利用者が任意で登録したお薬・サプリメントの名称、服用タイミング、残薬数、服用履歴（クラウド同期によるマルチデバイス利用および自己管理機能の提供のため）。</li>
+            <li><strong>ゲストモードの一時データ：</strong>お試し体験用のサンプルおよび一時入力データは利用者のブラウザ内（localStorage）にのみ保存され、外部サーバーへは送信されません。</li>
           </ul>
-          <div class="policy-operator-block">
-            <p style="margin-bottom:0;">
-              <strong>運営者：</strong>個人開発（@Yoduru_M41）<br />
-              <strong>お問い合わせ窓口：</strong><a href="contact.html">お問い合わせフォーム</a> または
-              <a href="mailto:nomidoki.support@gmail.com">nomidoki.support@gmail.com</a>
-            </p>
-          </div>
-        </div>
+
+          <h4>2. データの保管先および安全管理措置</h4>
+          <p>
+            本サービスの会員認証およびクラウドデータ保管には、Google LLC が提供する「Firebase Authentication」および「Cloud Firestore」を利用しています。通信はすべて SSL/TLS により暗号化され、認証された利用者本人のみが自身のデータへアクセスできるようセキュリティルールを設定しています。
+          </p>
+
+          <h4>3. 広告配信および外部送信に関する事項</h4>
+          <p>
+            本サービスでは、運営維持のために第三者配信の広告サービス（Google AdSense 等）を利用する場合があります。広告配信事業者は、利用者の興味に応じた広告を表示するために Cookie 等を使用することがあります。Cookie を無効にする設定および Google による広告配信の詳細については、<a href="https://policies.google.com/technologies/ads?hl=ja" target="_blank" rel="noopener noreferrer">Google ポリシーと規約</a>をご確認ください。
+          </p>
+
+          <h4>4. 個人情報の開示・訂正・削除（退会）</h4>
+          <p>
+            利用者は、ログイン後の「設定・規約」画面から登録情報の修正およびアカウント・クラウドデータの完全削除をいつでもご自身で実行できます。
+          </p>
+        </article>
 
         <!-- 利用規約 -->
-        <div id="terms-doc" class="doc-box" style="margin-bottom:0;">
-          <h2>利用規約</h2>
+        <article id="terms-doc" class="legal-doc-card">
+          <h3>利用規約</h3>
           <p>
-            本規約は、当サービスの利用に関する条件を定めるものです。利用者は本規約に同意のうえ、当サービスをご利用ください。
+            本規約は、<span class="site-operator-name">ノミドキ運営事務局</span>が提供する「ノミドキ（Nomidoki）」の利用条件を定めるものです。利用者は本規約に同意のうえ本サービスを利用するものとします。
           </p>
-          <ul>
-            <li>当サービスは現状有姿で提供されるものであり、特定の目的への適合性や完全性、端末の故障・ブラウザキャッシュ消去等によるデータ消失がないことを保証するものではありません。</li>
-            <li>当サービスの利用により生じた損害（飲み忘れ・重複服用・データ消失等を含む）について、運営者は一切の責任を負いかねます。</li>
-            <li>運営者は、予告なく本サービスの内容変更、バージョンアップ、または提供の停止を行うことがあります。</li>
-          </ul>
+          <h4>第1条（サービスの性質・非医療行為）</h4>
+          <p>
+            本サービスは個人の服薬記録および健康管理の補助を目的とするものであり、医療行為・診断・処方・服薬指導を行うものではありません。利用者は自己の責任において本サービスを利用し、医療上の判断については必ず医師または薬剤師に相談するものとします。
+          </p>
+          <h4>第2条（禁止事項）</h4>
+          <p>
+            法令または公序良俗に反する行為、本サービスのサーバーやネットワークに過度な負荷を与える行為、不正アクセス、他の利用者のアカウントを無断で使用する行為を禁止します。
+          </p>
+          <h4>第3条（免責およびサービスの変更・停止）</h4>
+          <p>
+            当運営は、システム保守、外部クラウドサービス（Firebase・Netlify等）の障害、その他やむを得ない事由により本サービスの全部または一部を変更・停止することがあります。本サービスの利用または利用不能により生じた損害について、当運営に故意または重過失がある場合を除き責任を負わないものとします。
+          </p>
+        </article>
+
+        <!-- 運営者情報 -->
+        <article id="operator-doc" class="legal-doc-card">
+          <h3>運営者情報</h3>
+          <table class="operator-table">
+            <tbody>
+              <tr>
+                <th>サービス名</th>
+                <td>ノミドキ（Nomidoki）</td>
+              </tr>
+              <tr>
+                <th>運営者</th>
+                <td class="site-operator-name">ノミドキ（Nomidoki）</td>
+              </tr>
+              <tr>
+                <th>お問い合わせ窓口</th>
+                <td>
+                  メール：<span class="site-contact-email">support@example.com</span><br />
+                  または<a href="contact.html">お問い合わせ専用ページ</a>よりご連絡ください。
+                </td>
+              </tr>
+              <tr>
+                <th>制定・最終改定日</th>
+                <td class="site-updated-date">2026年11月20日</td>
+              </tr>
+            </tbody>
+          </table>
+        </article>
+      </div>
+    </section>
+
+    <!-- お問い合わせ窓口誘導 -->
+    <section id="lp-contact" class="lp-section">
+      <div class="container">
+        <div class="legal-doc-card" style="max-width:720px; margin:0 auto; text-align:center;">
+          <span class="section-eyebrow">CONTACT</span>
+          <h2 class="section-title" style="margin-bottom:8px;">お問い合わせ窓口</h2>
+          <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:18px;">
+            アプリの使い方・不具合のご報告、機能追加のご要望、掲載内容に関するお問い合わせは専用ページより受け付けております。
+          </p>
+          <a href="contact.html" class="btn btn-primary">お問い合わせページを開く →</a>
         </div>
       </div>
     </section>
+  </div>
+
+  <!-- ==========================================================================
+       B. アプリ本体ビュー（ログイン完了後 / ゲストモード）
+       ========================================================================== -->
+  <main id="app-view" class="app-shell hidden">
+    <div class="container">
+      <!-- ゲストモード（お試し体験中）案内バナー -->
+      <div id="guest-mode-banner" class="guest-banner hidden">
+        <div>
+          <strong>🧪 ゲストモード（サンプルデータで体験中）：</strong>データはこのブラウザ内にのみ一時保存されています。無料会員登録するとクラウドに保存してスマホ・PCで同期できます。
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="openAuthModal('signup')">無料会員登録してデータを引き継ぐ</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="resetGuestSampleData()">サンプルを初期状態に戻す</button>
+        </div>
+      </div>
+
+      <!-- メール未認証時の案内バナー -->
+      <div id="email-verify-banner" class="guest-banner hidden">
+        <div>
+          <strong>📧 メールアドレスの確認をお願いします：</strong>ご登録のメールアドレス宛に確認メールを送信しました。メール内のリンクをクリック後、右のボタンを押してください。
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button type="button" class="btn btn-primary btn-sm" onclick="checkEmailVerificationStatus()">認証完了を確認する</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="resendVerificationEmail()">確認メールを再送信</button>
+        </div>
+      </div>
+
+      <!-- PC・タブレット用タブナビゲーション -->
+      <nav class="app-tabs-desktop" aria-label="アプリ機能タブ">
+        <button type="button" class="app-tab-btn active" data-tab="today" onclick="switchTab('today')">⏰ 今日の飲み時</button>
+        <button type="button" class="app-tab-btn" data-tab="meds" onclick="switchTab('meds')">💊 お薬・サプリ一覧</button>
+        <button type="button" class="app-tab-btn" data-tab="history" onclick="switchTab('history')">📅 服薬履歴カレンダー</button>
+        <button type="button" class="app-tab-btn" data-tab="guide" onclick="switchTab('guide')">📚 コラム・Q&amp;A</button>
+        <button type="button" class="app-tab-btn" data-tab="settings" onclick="switchTab('settings')">⚙️ 設定・規約</button>
+      </nav>
+
+      <!-- 1. 今日の飲み時タブ -->
+      <section id="tab-today">
+        <div class="card-header">
+          <div>
+            <h1 style="font-size:1.25rem; font-weight:800;" id="today-greeting-title">今日の飲み時</h1>
+            <p style="font-size:0.84rem; color:var(--text-secondary);" id="today-date-subtitle"></p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="openMedModal()">＋ お薬・サプリを登録</button>
+        </div>
+
+        <div class="summary-grid" id="today-summary-grid"></div>
+
+        <!-- 成分重複アラート（サプリメントのみ） -->
+        <div id="today-overlap-alerts"></div>
+
+        <!-- 種別フィルタ -->
+        <div class="filter-pills">
+          <button type="button" class="filter-pill active" data-today-filter="all" onclick="setTodayFilter('all')">すべて</button>
+          <button type="button" class="filter-pill" data-today-filter="rx" onclick="setTodayFilter('rx')">処方薬</button>
+          <button type="button" class="filter-pill" data-today-filter="otc" onclick="setTodayFilter('otc')">市販薬</button>
+          <button type="button" class="filter-pill" data-today-filter="supp" onclick="setTodayFilter('supp')">サプリメント</button>
+        </div>
+
+        <!-- 時間帯ごとの服薬リスト -->
+        <div id="today-slots-container"></div>
+
+        <!-- 本日お休みのお薬・サプリ（隔日・曜日指定など） -->
+        <div id="today-offday-container"></div>
+      </section>
+
+      <!-- 2. お薬・サプリ一覧タブ -->
+      <section id="tab-meds" class="hidden">
+        <div class="card-header">
+          <div>
+            <h2 style="font-size:1.2rem; font-weight:800;">登録中のお薬・サプリ一覧</h2>
+            <p style="font-size:0.84rem; color:var(--text-secondary);">服用間隔・残薬数の確認や補充、登録内容の編集ができます。</p>
+          </div>
+          <button type="button" class="btn btn-primary" onclick="openMedModal()">＋ 新しく登録する</button>
+        </div>
+
+        <div class="filter-pills">
+          <button type="button" class="filter-pill active" data-meds-filter="all" onclick="setMedsFilter('all')">すべて</button>
+          <button type="button" class="filter-pill" data-meds-filter="rx" onclick="setMedsFilter('rx')">処方薬</button>
+          <button type="button" class="filter-pill" data-meds-filter="otc" onclick="setMedsFilter('otc')">市販薬</button>
+          <button type="button" class="filter-pill" data-meds-filter="supp" onclick="setMedsFilter('supp')">サプリメント</button>
+          <button type="button" class="filter-pill" data-meds-filter="low" onclick="setMedsFilter('low')">⚠️ 残りわずか</button>
+        </div>
+
+        <div id="meds-list-container"></div>
+      </section>
+
+      <!-- 3. 服薬履歴カレンダータブ -->
+      <section id="tab-history" class="hidden">
+        <div class="card">
+          <div class="calendar-header">
+            <div>
+              <h2 class="card-title" id="calendar-month-label">2026年11月</h2>
+              <p style="font-size:0.8rem; color:var(--text-secondary);">日付をタップすると服薬タイムライン・記録忘れの追加・取り消しができます。</p>
+            </div>
+            <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+              <select id="calendar-med-filter" class="form-select" style="min-height:38px; padding:6px 10px; font-size:0.82rem; width:auto;" onchange="setCalendarFilter(this.value)">
+                <option value="all">すべてのお薬・サプリ</option>
+                <option value="interval_only">隔日・週1・間隔指定のみ</option>
+              </select>
+              <button type="button" class="btn btn-outline btn-sm" onclick="changeCalendarMonth(-1)">← 前月</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="jumpToCalendarToday()">今月</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="changeCalendarMonth(1)">翌月 →</button>
+            </div>
+          </div>
+
+          <div class="calendar-grid" id="calendar-grid-container"></div>
+        </div>
+
+        <!-- 選択日の詳細・服薬タイムライン・さかのぼり記録 -->
+        <div class="card" id="calendar-day-detail-card"></div>
+      </section>
+
+      <!-- 4. コラム・Q&Aタブ -->
+      <section id="tab-guide" class="hidden">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h2 class="card-title">📖 栄養成分・お薬の「飲み時」解説コラム</h2>
+              <p style="font-size:0.82rem; color:var(--text-secondary);">最新3記事とよく読まれる3記事をピックアップしています。</p>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <a href="columns.html" class="btn btn-secondary btn-sm">全コラム一覧ページへ →</a>
+              <a href="faq.html" class="btn btn-outline btn-sm">使い方・Q&amp;Aページへ →</a>
+            </div>
+          </div>
+          <div id="app-column-showcase"></div>
+        </div>
+
+        <div class="disclaimer-card">
+          <h3>⚠️ 医療・健康情報に関する免責事項</h3>
+          <ul>
+            <li>本アプリは服薬スケジュールや残薬の自己管理を目的としており、医師・薬剤師による診断・処方・服薬指導に代わるものではありません。</li>
+            <li>処方薬・市販薬は必ず主治医・薬剤師の指示およびお薬袋・添付文書の記載どおりに服用してください。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 5. 設定・規約タブ -->
+      <section id="tab-settings" class="hidden">
+        <!-- プロフィール・ニックネーム設定 -->
+        <div class="card" id="profile-settings-card">
+          <h2 class="card-title" style="margin-bottom:12px;">👤 アカウント・ニックネーム設定</h2>
+          <div id="profile-settings-body"></div>
+        </div>
+
+        <!-- データのバックアップ・復元 -->
+        <div class="card">
+          <h2 class="card-title" style="margin-bottom:8px;">💾 データのバックアップ・復元（JSON）</h2>
+          <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:14px;">
+            現在登録されているお薬・サプリと服薬履歴をJSONファイルとして端末に保存・復元できます。
+          </p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-secondary btn-sm" onclick="exportBackupJson()">JSONファイルに書き出す</button>
+            <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+              JSONファイルから復元する
+              <input type="file" accept=".json" class="hidden" onchange="importBackupJson(event)" />
+            </label>
+          </div>
+        </div>
+
+        <!-- 法的ドキュメント・Q&Aリンク -->
+        <div class="card">
+          <h2 class="card-title" style="margin-bottom:10px;">📄 ガイド・規約・お問い合わせ</h2>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <a href="faq.html" class="btn btn-outline btn-sm">使い方ガイド・Q&amp;A</a>
+            <a href="columns.html" class="btn btn-outline btn-sm">飲み時解説コラム一覧</a>
+            <a href="contact.html" class="btn btn-outline btn-sm">お問い合わせ窓口</a>
+          </div>
+          <p style="font-size:0.82rem; color:var(--text-secondary); margin-top:12px;">
+            運営：<span class="site-operator-name">ノミドキ（Nomidoki）</span> ／ お問い合わせ：<span class="site-contact-email">support@example.com</span>
+          </p>
+        </div>
+
+        <!-- アカウント完全削除（ログイン時のみ表示） -->
+        <div class="card hidden" id="delete-account-card" style="border-color:var(--danger-border);">
+          <h2 class="card-title" style="color:var(--danger); margin-bottom:8px;">⚠️ アカウントと全データの完全削除</h2>
+          <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:12px;">
+            クラウド上に保存されたすべての服薬データおよびアカウント情報を完全に削除します。この操作は取り消せません。
+          </p>
+          <button type="button" class="btn btn-danger-outline btn-sm" onclick="confirmDeleteAccount()">アカウントと全データを完全に削除する</button>
+        </div>
+      </section>
+
+      <!-- ポリシー準拠広告枠（主要操作ボタンから十分離して配置） -->
+      <aside class="ad-slot-wrapper" aria-label="ノミドキ公式インフォメーション">
+        <div class="ad-slot-label">
+          <span class="ad-tag">ノミドキ公式案内 / PR</span>
+          <span>インフォメーション枠</span>
+        </div>
+        <div id="ad-slot-content" style="font-size:0.83rem; color:var(--text-secondary);"></div>
+      </aside>
+    </div>
   </main>
 
-  <!-- 履歴確認モーダル -->
-  <div id="history-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="history-modal-title">
-    <div class="modal-panel">
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-        <h3 id="history-modal-title" style="font-size:1.1rem; font-weight:800;">📜 直近の服用履歴（過去7日間）</h3>
-        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('history-modal')">✕ 閉じる</button>
-      </div>
-      <div id="history-list-body" style="max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;"></div>
-    </div>
-  </div>
-
-  <!-- 全データ初期化確認モーダル（alert/confirm不使用） -->
-  <div id="reset-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title">
-    <div class="modal-panel">
-      <h3 id="reset-modal-title" style="font-size:1.1rem; font-weight:800; color:var(--danger); margin-bottom:10px;">⚠️ 全データの初期化確認</h3>
-      <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:18px;">
-        登録されているお薬リストとすべての服用履歴を削除します。この操作は元に戻せません。実行しますか？
-      </p>
-      <div style="display:flex; gap:10px; justify-content:flex-end;">
-        <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('reset-modal')">キャンセル</button>
-        <button type="button" class="btn btn-danger-outline btn-sm" onclick="executeResetAllData()">はい、すべて削除する</button>
-      </div>
-    </div>
-  </div>
+  <!-- スマホ用下部固定ナビゲーション -->
+  <nav class="mobile-bottom-nav hidden" id="mobile-bottom-nav" aria-label="モバイルメニュー">
+    <button type="button" class="mobile-nav-item active" data-tab="today" onclick="switchTab('today')">
+      <span>⏰</span><span>飲み時</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab="meds" onclick="switchTab('meds')">
+      <span>💊</span><span>一覧</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab="history" onclick="switchTab('history')">
+      <span>📅</span><span>履歴</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab="guide" onclick="switchTab('guide')">
+      <span>📚</span><span>コラム</span>
+    </button>
+    <button type="button" class="mobile-nav-item" data-tab="settings" onclick="switchTab('settings')">
+      <span>⚙️</span><span>設定</span>
+    </button>
+  </nav>
 
   <!-- 共通フッター -->
-  <footer class="site-footer">
+  <footer class="site-footer" id="site-footer">
     <div class="container">
       <div class="footer-links">
-        <a href="index.html">トップページ（ノミドキ）</a>
+        <a href="#top">ページ上部へ</a>
         <a href="columns.html">飲み時解説コラム</a>
         <a href="faq.html">使い方ガイド・Q&amp;A</a>
         <a href="contact.html">お問い合わせ</a>
-        <a href="index.html#lp-disclaimer">医療免責事項</a>
-        <a href="index.html#privacy-policy-doc">プライバシーポリシー</a>
-        <a href="index.html#terms-doc">利用規約</a>
+        <a href="#lp-disclaimer">医療免責事項</a>
+        <a href="#privacy-policy-doc">プライバシーポリシー</a>
+        <a href="#terms-doc">利用規約</a>
+        <a href="#operator-doc">運営者情報</a>
       </div>
       <p style="margin-bottom:6px;">
-        運営：<span>個人開発（@Yoduru_M41）</span> ／ お問い合わせ：<span>nomidoki.support@gmail.com</span> ／ ver.1.0
+        運営：<span class="site-operator-name">ノミドキ（Nomidoki）</span> ／ お問い合わせ：<span class="site-contact-email">support@example.com</span>
       </p>
       <p>© 2026 ノミドキ（Nomidoki） All rights reserved. 本サービスは医療行為・診断・処方を提供するものではありません。</p>
     </div>
   </footer>
 
-  <script>
-    const STORAGE_KEY_MEDS = 'nomidoki_meds_v1';
-    const STORAGE_KEY_LOGS = 'nomidoki_logs_v1';
+  <!-- ==========================================================================
+       モーダル群（認証 / ゲスト確認 / お薬登録・編集 / 補充 / さかのぼり記録 / 確認）
+       ========================================================================== -->
 
-    let medications = [];
-    let intakeLogs = {};
-    let currentFilter = 'ALL';
+  <!-- 0. ゲストモード（サンプル体験）開始確認モーダル -->
+  <div class="modal-backdrop hidden" id="guest-confirm-modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog" style="max-width:440px;">
+      <div class="modal-header">
+        <h2 class="modal-title">🧪 ゲストモードでお試し体験</h2>
+        <button type="button" class="modal-close-btn" onclick="closeModal('guest-confirm-modal')" aria-label="閉じる">×</button>
+      </div>
+      <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:12px; line-height:1.7;">
+        サンプルのお薬・サプリメント（処方薬・市販薬・マルチビタミン・ヘム鉄など）が登録された状態で、すぐに画面操作をお試しいただけます。
+      </p>
+      <div class="alert-box alert-warning" style="font-size:0.82rem;">
+        <strong>ご注意：</strong>ゲストモードのデータはお使いのブラウザ内にのみ一時保存されます（クラウド同期なし）。継続してご利用になる場合は、無料会員登録（メール認証）を行ってデータを引き継いでください。
+      </div>
+      <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:16px;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('guest-confirm-modal')">キャンセル</button>
+        <button type="button" class="btn btn-primary" onclick="startGuestMode()">サンプルデータで試す</button>
+      </div>
+    </div>
+  </div>
 
-    // 午前4:00切替の論理日付キー（YYYY-MM-DD）を取得
-    function getLogicalDateKey(dateObj = new Date()) {
-      const shifted = new Date(dateObj.getTime() - 4 * 60 * 60 * 1000);
-      const y = shifted.getFullYear();
-      const m = String(shifted.getMonth() + 1).padStart(2, '0');
-      const d = String(shifted.getDate()).padStart(2, '0');
+  <!-- 1. ログイン・新規会員登録モーダル -->
+  <div class="modal-backdrop hidden" id="auth-modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog" style="max-width:440px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="auth-modal-title">無料会員登録</h2>
+        <button type="button" class="modal-close-btn" onclick="closeModal('auth-modal')" aria-label="閉じる">×</button>
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:16px;">
+        <button type="button" id="auth-tab-signup" class="btn btn-primary btn-sm" onclick="setAuthMode('signup')">新規会員登録</button>
+        <button type="button" id="auth-tab-login" class="btn btn-outline btn-sm" onclick="setAuthMode('login')">ログイン</button>
+      </div>
+
+      <form id="auth-form" onsubmit="submitAuthForm(event)">
+        <div class="form-group" id="auth-nickname-group">
+          <label class="form-label" for="auth-nickname">ニックネーム（表示名）</label>
+          <input type="text" id="auth-nickname" class="form-input" placeholder="例：たろう（未入力時は自動設定）" maxlength="20" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="auth-email">メールアドレス <span style="color:var(--danger);">*</span></label>
+          <input type="email" id="auth-email" class="form-input" placeholder="example@gmail.com" required />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="auth-password">パスワード <span style="color:var(--danger);">*</span></label>
+          <div class="password-input-wrap">
+            <input type="password" id="auth-password" class="form-input" placeholder="半角英字と半角数字を含む6文字以上" oninput="updatePasswordRulesIndicator(this.value)" required />
+            <button type="button" class="password-toggle-btn" id="auth-pw-toggle" onclick="togglePasswordVisibility()" aria-label="パスワードの表示切り替え">
+              <svg id="eye-icon-open" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg id="eye-icon-closed" class="hidden" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+            </button>
+          </div>
+
+          <div class="pw-rules-box" id="pw-rules-box">
+            <div class="pw-rule-item" id="pw-rule-length">○ 6文字以上で入力</div>
+            <div class="pw-rule-item" id="pw-rule-mix">○ 半角英字と半角数字の2種類を組み合わせる（全角・スペース不可）</div>
+          </div>
+        </div>
+
+        <button type="submit" id="auth-submit-btn" class="btn btn-primary btn-block">無料で登録して始める</button>
+
+        <div id="auth-forgot-wrap" class="hidden" style="text-align:center; margin-top:12px;">
+          <button type="button" style="font-size:0.82rem; color:var(--primary-hover); font-weight:700; text-decoration:underline;" onclick="sendPasswordResetFromModal()">
+            パスワードをお忘れの方（再設定メールを送信）
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 2. お薬・サプリ登録＆編集モーダル -->
+  <div class="modal-backdrop hidden" id="med-modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h2 class="modal-title" id="med-modal-title">お薬・サプリの登録</h2>
+        <button type="button" class="modal-close-btn" onclick="closeModal('med-modal')" aria-label="閉じる">×</button>
+      </div>
+
+      <form id="med-form" onsubmit="saveMedication(event)">
+        <input type="hidden" id="med-id" />
+
+        <!-- 種別選択（処方薬 / 市販薬 / サプリメント） -->
+        <div class="form-group">
+          <label class="form-label">種別を選択 <span style="color:var(--danger);">*</span></label>
+          <div class="chip-grid">
+            <button type="button" class="select-chip active" data-med-type="rx" onclick="selectMedType('rx')">🏥 処方薬</button>
+            <button type="button" class="select-chip" data-med-type="otc" onclick="selectMedType('otc')">🏪 市販薬</button>
+            <button type="button" class="select-chip" data-med-type="supp" onclick="selectMedType('supp')">🌿 サプリメント</button>
+          </div>
+        </div>
+
+        <!-- 処方薬・市販薬選択時の簡潔な注意事項 -->
+        <div id="rx-otc-notice-box" class="alert-box alert-warning" style="font-size:0.83rem;">
+          <strong>ご注意：</strong>お薬袋・処方箋・添付文書の指示どおりのタイミングを選択してください。
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="med-name">お薬・サプリメントの名称 <span style="color:var(--danger);">*</span></label>
+          <input type="text" id="med-name" class="form-input" placeholder="例：ロキソプロフェン錠 / DHC マルチビタミン / ディアナチュラ 鉄×マルチビタミン" oninput="handleMedNameInput(this.value)" required />
+        </div>
+
+        <!-- サプリメント選択時のみ表示される栄養成分カテゴリ＆参考タイミングガイド -->
+        <div id="supp-ingredient-section" class="hidden">
+          <div class="form-group">
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; margin-bottom:6px; flex-wrap:wrap;">
+              <label class="form-label" style="margin-bottom:0;">栄養成分カテゴリ（名称入力で自動候補表示・複数選択可）</label>
+              <span id="ingredient-filter-status" style="font-size:0.74rem; font-weight:800; color:var(--primary-hover);">全15カテゴリ</span>
+            </div>
+            <div class="chip-grid" id="ingredient-tag-selector"></div>
+            <div id="ingredient-show-all-wrap" class="hidden" style="margin-top:8px;">
+              <button type="button" class="btn btn-ghost btn-sm" style="padding:4px 10px; min-height:32px; font-size:0.76rem;" onclick="showAllIngredientTags()">
+                すべての栄養カテゴリ（全15種）を表示する
+              </button>
+            </div>
+          </div>
+
+          <div id="nomidoki-suggestion-box" class="alert-box alert-purple hidden" style="font-size:0.82rem;"></div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="med-dosage">1回の服用量・目安 <span style="color:var(--danger);">*</span></label>
+          <input type="text" id="med-dosage" class="form-input" placeholder="例：1錠 / 2粒 / 1包" value="1錠" required />
+        </div>
+
+        <!-- 服用間隔・スケジュール（毎日 / 隔日 / 曜日指定 / ◯日ごと） -->
+        <div class="form-group">
+          <label class="form-label">服用間隔・スケジュール</label>
+          <div class="chip-grid">
+            <button type="button" class="select-chip active" data-freq-type="daily" onclick="selectFreqType('daily')">毎日</button>
+            <button type="button" class="select-chip" data-freq-type="every_other" onclick="selectFreqType('every_other')">隔日（1日おき）</button>
+            <button type="button" class="select-chip" data-freq-type="weekdays" onclick="selectFreqType('weekdays')">曜日指定（週1など）</button>
+            <button type="button" class="select-chip" data-freq-type="custom_days" onclick="selectFreqType('custom_days')">◯日ごと（カスタム）</button>
+          </div>
+
+          <!-- 隔日・カスタム間隔用の基準日入力 -->
+          <div id="freq-interval-options" class="hidden" style="margin-top:10px; padding:12px; background:var(--surface-muted); border-radius:var(--radius-md); border:1px solid var(--border-soft);">
+            <div id="freq-custom-days-wrap" class="form-group hidden">
+              <label class="form-label" for="med-interval-days">何日ごとに飲むか</label>
+              <input type="number" id="med-interval-days" class="form-input" min="2" max="90" value="7" />
+              <div class="form-hint">例：7日ごと＝週1回、14日ごと＝2週に1回</div>
+            </div>
+            <div class="form-group" style="margin-bottom:0;">
+              <label class="form-label" for="med-start-date">基準日（最初に飲む日）</label>
+              <input type="date" id="med-start-date" class="form-input" />
+            </div>
+          </div>
+
+          <!-- 曜日指定用の曜日選択 -->
+          <div id="freq-weekdays-options" class="hidden" style="margin-top:10px; padding:12px; background:var(--surface-muted); border-radius:var(--radius-md); border:1px solid var(--border-soft);">
+            <label class="form-label">飲む曜日を選択（複数選択可）</label>
+            <div class="chip-grid" id="weekday-selector"></div>
+          </div>
+        </div>
+
+        <!-- 飲むタイミング（新規登録時は初期チェックなし） -->
+        <div class="form-group">
+          <label class="form-label">飲むタイミング（複数選択可） <span style="color:var(--danger);">*</span></label>
+          <div class="chip-grid" id="timing-slot-selector"></div>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:12px;">
+          <div class="form-group">
+            <label class="form-label" for="med-stock">現在の残数（回分）</label>
+            <input type="number" id="med-stock" class="form-input" min="0" max="999" value="14" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="med-threshold">補充アラート基準（回分以下）</label>
+            <input type="number" id="med-threshold" class="form-input" min="0" max="100" value="5" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="med-memo">メモ（任意）</label>
+          <input type="text" id="med-memo" class="form-input" placeholder="例：水またはぬるま湯で飲む / 病院名など" />
+        </div>
+
+        <div style="display:flex; gap:10px; justify-content:flex-end; margin-top:18px;">
+          <button type="button" class="btn btn-outline" onclick="closeModal('med-modal')">キャンセル</button>
+          <button type="submit" class="btn btn-primary">保存する</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. 残薬補充モーダル -->
+  <div class="modal-backdrop hidden" id="refill-modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog" style="max-width:420px;">
+      <div class="modal-header">
+        <h2 class="modal-title">残薬数の補充</h2>
+        <button type="button" class="modal-close-btn" onclick="closeModal('refill-modal')" aria-label="閉じる">×</button>
+      </div>
+      <p id="refill-med-info" style="font-size:0.9rem; font-weight:700; margin-bottom:14px;"></p>
+      <div class="chip-grid" style="margin-bottom:14px;">
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addRefillAmount(7)">＋7回分</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addRefillAmount(14)">＋14回分</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addRefillAmount(28)">＋28回分</button>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addRefillAmount(30)">＋30回分</button>
+      </div>
+      <div class="form-group">
+        <label class="form-label" for="refill-custom-input">任意の追加回分</label>
+        <div style="display:flex; gap:8px;">
+          <input type="number" id="refill-custom-input" class="form-input" min="1" max="500" value="10" />
+          <button type="button" class="btn btn-primary" onclick="submitCustomRefill()">補充する</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. 記録忘れさかのぼり追加モーダル -->
+  <div class="modal-backdrop hidden" id="retro-log-modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog" style="max-width:440px;">
+      <div class="modal-header">
+        <h2 class="modal-title">📝 飲んだ記録をさかのぼって追加</h2>
+        <button type="button" class="modal-close-btn" onclick="closeModal('retro-log-modal')" aria-label="閉じる">×</button>
+      </div>
+      <p id="retro-log-target-info" style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:14px;"></p>
+      <div class="form-group">
+        <label class="form-label" for="retro-time-input">飲んだおおよその時刻</label>
+        <input type="time" id="retro-time-input" class="form-input" value="08:00" />
+      </div>
+      <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; font-weight:700; margin-bottom:16px; cursor:pointer;">
+        <input type="checkbox" id="retro-after-midnight-check" style="width:18px; height:18px;" />
+        <span>深夜0:00〜3:59（24:00〜27:59）の未明に飲んだ記録として登録する</span>
+      </label>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('retro-log-modal')">キャンセル</button>
+        <button type="button" class="btn btn-primary" onclick="submitRetroactiveLog()">追加記録を保存する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. 汎用確認ダイアログモーダル（alert/confirm代替） -->
+  <div class="modal-backdrop hidden" id="confirm-modal" role="dialog" aria-modal="true">
+    <div class="modal-dialog" style="max-width:420px;">
+      <div class="modal-header">
+        <h2 class="modal-title" id="confirm-modal-title">確認</h2>
+        <button type="button" class="modal-close-btn" onclick="closeModal('confirm-modal')" aria-label="閉じる">×</button>
+      </div>
+      <p id="confirm-modal-message" style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:18px; line-height:1.7;"></p>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button type="button" class="btn btn-outline" onclick="closeModal('confirm-modal')">キャンセル</button>
+        <button type="button" id="confirm-modal-ok-btn" class="btn btn-danger">実行する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase SDK + アプリケーションロジック -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getAuth,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut,
+      onAuthStateChanged,
+      updateProfile,
+      deleteUser,
+      sendEmailVerification,
+      sendPasswordResetEmail
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+    import {
+      getFirestore,
+      doc,
+      getDoc,
+      setDoc,
+      deleteDoc
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+    /**
+     * ==========================================================================
+     * 【運営者・公開情報設定（SITE_INFO）】
+     * 公開前に operatorName と contactEmail をご自身の情報に書き換えてください。
+     * ==========================================================================
+     */
+    const SITE_INFO = {
+      operatorName: 'ノミドキ（Nomidoki）',
+      contactEmail: 'support@example.com',
+      updatedDate: '2026年11月20日'
+    };
+
+    /**
+     * ==========================================================================
+     * 【広告配信設定（AD_CONFIG）】
+     * 審査通過後に provider を 'adsense' に変更し、clientId / slotId を設定すると本番広告へ切り替わります。
+     * ==========================================================================
+     */
+    const AD_CONFIG = {
+      provider: 'demo', // 'demo' | 'adsense'
+      adsenseClientId: 'ca-pub-XXXXXXXXXXXXXXXX',
+      adsenseSlotId: 'XXXXXXXXXX'
+    };
+
+    /**
+     * Firebase プロジェクト設定（ご自身のFirebase設定値に差し替え可能）
+     */
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyDemoNomidokiPublicWebKey000000000",
+      authDomain: "nomidoki-app.firebaseapp.com",
+      projectId: "nomidoki-app",
+      storageBucket: "nomidoki-app.appspot.com",
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abcdef1234567890"
+    };
+
+    /**
+     * 服用タイミングマスター（8時間帯）
+     */
+    const TIMING_SLOTS = [
+      { id: 'wake_up', label: '起床時', timeHint: '起きてすぐ・朝食前' },
+      { id: 'before_breakfast', label: '朝食前', timeHint: '食事の約30分前' },
+      { id: 'after_breakfast', label: '朝食後', timeHint: '食後30分以内' },
+      { id: 'before_lunch', label: '昼食前', timeHint: '食事の約30分前' },
+      { id: 'after_lunch', label: '昼食後', timeHint: '食後30分以内' },
+      { id: 'before_dinner', label: '夕食前', timeHint: '食事の約30分前' },
+      { id: 'after_dinner', label: '夕食後', timeHint: '食後30分以内' },
+      { id: 'bedtime', label: '就寝前', timeHint: '寝る約30分前' },
+      { id: 'asneeded', label: '頓服・その他', timeHint: '必要時・運動前後・食間など' }
+    ];
+
+    const WEEKDAY_LABELS = ['日', '月', '火', '水', '木', '金', '土'];
+
+    /**
+     * サプリメント専用の栄養成分カテゴリ（処方薬・市販薬には一切適用しない）
+     * DHC・ディアナチュラ・ネイチャーメイド・UHAグミサプリ等の実際のラインナップに即した15分類
+     */
+    const INGREDIENT_TAGS = [
+      {
+        id: 'multi_vitamin',
+        label: 'マルチビタミン（総合ビタミン）',
+        keywords: ['マルチビタミン', '総合ビタミン', '12種のビタミン', '14種のビタミン', 'ビタミン全種', 'パーフェクトビタミン', 'mv'],
+        recommendedSlots: ['after_breakfast', 'after_dinner'],
+        recommendedText: '朝食後 または 夕食後（脂質と水溶性の両方をバランスよく吸収）',
+        advice: '脂溶性（A・D・E・K）と水溶性（B群・C）の両方を含むため、食事のすぐ後に摂ると吸収効率が高まります。単体ビタミンとの重複摂取にご注意ください。',
+        overlapGroup: 'vit_a_d_e_k'
+      },
+      {
+        id: 'multi_vit_min',
+        label: 'マルチビタミン＆ミネラル',
+        keywords: ['マルチビタミン＆ミネラル', 'マルチビタミン&ミネラル', 'マルチビタミンミネラル', 'スーパーマルチ', 'vit&min', 'mvm'],
+        recommendedSlots: ['after_breakfast', 'after_dinner'],
+        recommendedText: '朝食後 または 夕食後（お茶・コーヒーは前後30分空ける）',
+        advice: 'ビタミン12種＋ミネラル7〜9種などをまとめて補える総合タイプです。ミネラルの吸収を妨げないよう緑茶やコーヒーではなく水でお飲みください。',
+        overlapGroup: 'multi_mineral'
+      },
+      {
+        id: 'vitamin_b',
+        label: 'ビタミンB群・ビオチン・葉酸',
+        keywords: ['ビタミンb', 'ビタミンb群', 'ビタミンbミックス', 'bミックス', 'b1', 'b2', 'b6', 'b12', '葉酸', 'ビオチン', 'ナイアシン', 'パントテン酸'],
+        recommendedSlots: ['after_breakfast', 'after_lunch'],
+        recommendedText: '朝食後・昼食後（1日2粒以上は朝・夜に分けると効率的）',
+        advice: '水溶性ビタミンのため一度に大量に摂ると尿へ排出されやすく、数回に分けて食後に摂るのがおすすめです。飲んだ後に尿が黄色くなるのはビタミンB2の色素による自然な反応です。',
+        overlapGroup: 'vit_b_complex'
+      },
+      {
+        id: 'vitamin_c',
+        label: 'ビタミンC・持続型ビタミンC',
+        keywords: ['ビタミンc', '持続型ビタミンc', 'タイムリリース', 'アスコルビン酸', 'vc'],
+        recommendedSlots: ['after_breakfast', 'after_dinner'],
+        recommendedText: '朝食後・夕食後（こまめに分けて食後摂取）',
+        advice: '体内に長く留まりにくい水溶性ビタミンのため、1日2回以上に分けて食後に摂ると血中濃度を保ちやすくなります。空腹時に酸味で胃が荒れやすい方も食後が安心です。',
+        overlapGroup: 'vit_c'
+      },
+      {
+        id: 'vitamin_d',
+        label: 'ビタミンD（D3）',
+        keywords: ['ビタミンd', 'ビタミンd3', 'vd', 'サンシャインビタミン'],
+        recommendedSlots: ['after_lunch', 'after_dinner'],
+        recommendedText: '昼食後 または 夕食後（脂質を含む食事のすぐ後）',
+        advice: '脂溶性ビタミンのため、油分（脂質）を含む食事の直後に摂ると胆汁酸の働きで吸収率が大きく高まります。',
+        overlapGroup: 'vit_a_d_e_k'
+      },
+      {
+        id: 'vitamin_e',
+        label: 'ビタミンE（トコフェロール）',
+        keywords: ['ビタミンe', '天然ビタミンe', 'トコフェロール', 've'],
+        recommendedSlots: ['after_lunch', 'after_dinner'],
+        recommendedText: '昼食後 または 夕食後（脂質を含む食事のすぐ後）',
+        advice: '脂溶性ビタミンのため、食事の脂質と一緒に摂ることで効率よく吸収されます。',
+        overlapGroup: 'vit_a_d_e_k'
+      },
+      {
+        id: 'iron_folic',
+        label: '鉄・ヘム鉄・鉄×葉酸',
+        keywords: ['鉄', 'ヘム鉄', '鉄分', 'フェリチン', '鉄×葉酸', '鉄・葉酸', '鉄＆葉酸', 'ファイチ'],
+        recommendedSlots: ['after_breakfast', 'after_dinner'],
+        recommendedText: '朝食後 または 夕食後（お茶・コーヒーは前後30〜60分空ける）',
+        advice: '緑茶・紅茶・コーヒーに含まれるタンニンは鉄の吸収を妨げるため、必ず水でお飲みください。ビタミンCと一緒に摂ると吸収がサポートされます。',
+        overlapGroup: 'iron'
+      },
+      {
+        id: 'zinc_maca',
+        label: '亜鉛・セレン・クロム',
+        keywords: ['亜鉛', 'ジンク', 'zinc', 'セレン', 'クロム', '亜鉛×マカ', '亜鉛&マカ'],
+        recommendedSlots: ['after_dinner'],
+        recommendedText: '夕食後（空腹時の胃のムカムカ防止のため食後必須）',
+        advice: '空腹時に亜鉛を飲むと吐き気や胃のムカムカを感じやすいため、必ず食後に水で摂取してください。お茶・コーヒーのタンニンとの同時摂取は控えましょう。',
+        overlapGroup: 'zinc'
+      },
+      {
+        id: 'cal_mag',
+        label: 'カルシウム・マグネシウム（Ca・Mg）',
+        keywords: ['カルシウム', 'マグネシウム', 'カルシウム・マグネシウム', 'カルシウム＆マグネシウム', 'カルシウム&マグネシウム', 'ca', 'mg'],
+        recommendedSlots: ['after_dinner', 'bedtime'],
+        recommendedText: '夕食後 または 就寝前（胃酸が出る食後が吸収に有利）',
+        advice: '食事による胃酸の分泌でイオン化して吸収されやすくなります。マグネシウムは一度に多く摂るとお腹がゆるくなることがあるため少量ずつ食後に補うのがコツです。',
+        overlapGroup: 'cal_mag'
+      },
+      {
+        id: 'dha_epa',
+        label: 'DHA・EPA・オメガ3（フィッシュオイル）',
+        keywords: ['dha', 'epa', 'オメガ3', 'omega3', 'フィッシュオイル', '青魚', 'ナットウキナーゼ', 'クリルオイル'],
+        recommendedSlots: ['after_lunch', 'after_dinner'],
+        recommendedText: '昼食後 または 夕食後（食後すぐがにおい戻り防止にも有効）',
+        advice: '脂溶性成分のため、脂質を含む食事のすぐ後に摂ると吸収率が高まります。魚由来のにおい戻りが気になる方も食後すぐの摂取がおすすめです。',
+        overlapGroup: 'omega3'
+      },
+      {
+        id: 'lutein_blueberry',
+        label: 'ルテイン・ブルーベリー・アスタキサンチン',
+        keywords: ['ルテイン', 'ブルーベリー', 'ビルベリー', 'アントシアニン', 'アスタキサンチン', 'ゼアキサンチン', '速攻ブルーベリー', 'えんきん'],
+        recommendedSlots: ['after_breakfast', 'after_lunch'],
+        recommendedText: '朝食後 または 昼食後（脂溶性カロテノイドは食後が効率的）',
+        advice: 'ルテインやアスタキサンチンは油に溶けやすい脂溶性成分のため、脂質を含む食事の後に摂ると吸収効率がアップします。',
+        overlapGroup: 'carotenoid'
+      },
+      {
+        id: 'probiotics',
+        label: '乳酸菌・ビフィズス菌・酪酸菌・食物繊維',
+        keywords: ['乳酸菌', 'ビフィズス菌', '酪酸菌', '整腸', '腸活', 'オリゴ糖', '食物繊維', 'イヌリン', 'コンブチャ', '酵素'],
+        recommendedSlots: ['after_breakfast', 'after_dinner'],
+        recommendedText: '朝食後 または 夕食後（胃酸が薄まる食後が菌にやさしい）',
+        advice: '空腹時の強い胃酸を避け、食事で胃酸が薄まった食後に常温の水・ぬるま湯で摂ることで菌が生きたまま腸へ届きやすくなります。',
+        overlapGroup: 'probiotics'
+      },
+      {
+        id: 'protein_amino',
+        label: 'プロテイン・アミノ酸・BCAA・EAA・クレアチン',
+        keywords: ['プロテイン', 'ホエイ', 'ソイ', 'アミノ酸', 'bcaa', 'eaa', 'グルタミン', 'クレアチン', 'hmb', 'アルギニン', 'シトルリン'],
+        recommendedSlots: ['asneeded', 'wake_up', 'bedtime'],
+        recommendedText: '運動前後・間食（頓服・その他） または 起床時・就寝前',
+        advice: 'トレーニング前後や食事の間隔が空く時間帯（頓服・その他）の補給に適しています。深夜28時（翌朝4時）までは当日分としてそのまま記録できます。',
+        overlapGroup: 'protein_amino'
+      },
+      {
+        id: 'collagen_beauty',
+        label: 'コラーゲン・ヒアルロン酸・セラミド・プラセンタ',
+        keywords: ['コラーゲン', 'ヒアルロン酸', 'セラミド', 'プラセンタ', 'エラスチン', 'ハトムギ', 'イソフラボン', 'エクオール'],
+        recommendedSlots: ['after_dinner', 'bedtime'],
+        recommendedText: '夕食後 または 就寝前（毎日の美容ルーティンとして定着しやすい時間）',
+        advice: '毎日同じ時間帯に継続することが大切です。コラーゲンはビタミンCと一緒に摂ると体内の合成サポートに役立ちます。',
+        overlapGroup: 'beauty'
+      },
+      {
+        id: 'glucosamine_coq10',
+        label: 'グルコサミン・コンドロイチン・コエンザイムQ10・GABA',
+        keywords: ['グルコサミン', 'コンドロイチン', 'プロテオグリカン', 'コエンザイム', 'coq10', '還元型コエンザイム', 'gaba', 'ギャバ', 'テアニン', 'セサミン', 'ウコン', 'オルニチン', 'マカ'],
+        recommendedSlots: ['after_breakfast', 'after_dinner'],
+        recommendedText: '朝食後 または 夕食後（成分特性に合わせ食後が基本）',
+        advice: 'コエンザイムQ10やセサミンなどの脂溶性成分は食後に吸収が高まり、グルコサミンやアミノ酸系も毎日決まった食後に飲むことで飲み忘れを防げます。',
+        overlapGroup: 'specialty'
+      }
+    ];
+
+    /**
+     * 解説コラム記事一覧（columns.html と完全連動）
+     */
+    const EDUCATIONAL_ARTICLES = [
+      {
+        id: 'hydration-temp',
+        categoryLabel: 'お薬の基本',
+        publishedAt: '2026-11-20',
+        popularScore: 94,
+        readTime: '約3分',
+        title: 'お薬やサプリを飲むときの「水の量と温度」の基本｜水なし服用や熱いお茶がNGな理由',
+        summary: 'コップ1杯（約150〜200ml）の水またはぬるま湯が必要な理由と、カプセルや乳酸菌に熱いお湯がNGな理由を解説します。'
+      },
+      {
+        id: 'magnesium-calcium',
+        categoryLabel: 'ミネラル・飲み合わせ',
+        publishedAt: '2026-11-18',
+        popularScore: 86,
+        readTime: '約3分',
+        title: 'カルシウムとマグネシウムの黄金バランスと摂取タイミング｜夜のリラックスタイム活用法',
+        summary: '2:1〜1:1の理想的な摂取比率と、食後や就寝前の習慣に取り入れやすい飲み方のポイントをまとめました。'
+      },
+      {
+        id: 'prescription-timing',
+        categoryLabel: 'お薬の基本',
+        publishedAt: '2026-11-15',
+        popularScore: 99,
+        readTime: '約4分',
+        title: '処方薬の「食前・食後・食間・就寝前」の正しい意味｜食間は「食事中」ではない？',
+        summary: '間違いやすい「食間（食後約2時間の空腹時）」をはじめ、お薬袋に書かれた服用タイミングの正しい基準を整理します。'
+      },
+      {
+        id: 'omega3',
+        categoryLabel: 'ビタミン・脂肪酸',
+        publishedAt: '2026-11-12',
+        popularScore: 84,
+        readTime: '約3分',
+        title: 'DHA・EPA・コエンザイムQ10の効率的な摂り方｜脂質を含む食事との相性',
+        summary: '脂質を含む昼食後や夕食後の摂取が吸収に適しています。酸化を防ぐための冷暗所保管のコツも解説します。'
+      },
+      {
+        id: 'probiotics',
+        categoryLabel: '乳酸菌・腸内ケア',
+        publishedAt: '2026-11-10',
+        popularScore: 89,
+        readTime: '約3分',
+        title: '乳酸菌・ビフィズス菌サプリは「食後」がいい理由｜胃酸の影響を受けにくいタイミング',
+        summary: '空腹時の強い胃酸を避け、食事で胃酸が薄まった食後に摂取することで菌が生きたまま腸へ届きやすくなります。'
+      },
+      {
+        id: 'iron-tannin',
+        categoryLabel: 'ミネラル・飲み合わせ',
+        publishedAt: '2026-11-08',
+        popularScore: 97,
+        readTime: '約4分',
+        title: '鉄分・亜鉛・カルシウムとお茶・コーヒーの飲み合わせ｜タンニンやフィチン酸との関係',
+        summary: '緑茶やコーヒーに含まれるタンニンはミネラルの吸収を妨げることがあるため、前後30〜60分空けて水で飲みましょう。'
+      },
+      {
+        id: 'water-soluble',
+        categoryLabel: 'ビタミン・脂肪酸',
+        publishedAt: '2026-11-05',
+        popularScore: 90,
+        readTime: '約3分',
+        title: 'ビタミンC・ビタミンB群は「こまめな摂取」がカギ！水溶性ビタミンの特徴と飲み時',
+        summary: '一度に大量に摂ると尿へ排出されやすい水溶性ビタミンは、朝・昼・夕の食後に分けて補うのが効率的です。'
+      },
+      {
+        id: 'fat-soluble',
+        categoryLabel: 'ビタミン・脂肪酸',
+        publishedAt: '2026-11-01',
+        popularScore: 95,
+        readTime: '約3分',
+        title: '脂溶性ビタミン（A・D・E・K）はなぜ「食後」がおすすめ？吸収率を高める食事の工夫',
+        summary: '油に溶けやすい脂溶性ビタミンのため、脂質を含む食事のすぐ後に摂ると胆汁酸の働きで吸収効率が高まります。'
+      }
+    ];
+
+    const STORAGE_KEYS = {
+      GUEST_DATA: 'nomidoki_guest_sample_data_v1',
+      LOCAL_SESSION: 'nomidoki_local_session_v3',
+      LOCAL_USERS: 'nomidoki_local_users_v3',
+      ARTICLE_VIEWS: 'nomidoki_article_views_v1'
+    };
+
+    /**
+     * ゲストモード用サンプルデータ生成（毎日・隔日・処方薬・市販薬・サプリを体験可能）
+     */
+    function createGuestSampleData() {
+      const todayStr = getTodayStr();
+      const timeInfo = buildRecordTimeInfo(new Date());
+      return {
+        nickname: 'ゲスト（体験中）',
+        medications: [
+          {
+            id: 'sample_rx_1',
+            type: 'rx',
+            name: '【サンプル】ロキソプロフェン錠 60mg',
+            dosage: '1錠',
+            stock: 12,
+            lowStockThreshold: 5,
+            memo: '痛み・発熱時または処方指示どおり食後に服用',
+            frequencyType: 'daily',
+            startDate: todayStr,
+            intervalDays: 2,
+            weekdays: [1, 3, 5],
+            timings: ['after_breakfast', 'after_dinner'],
+            ingredients: []
+          },
+          {
+            id: 'sample_otc_1',
+            type: 'otc',
+            name: '【サンプル】総合胃腸薬（市販薬）',
+            dosage: '1包',
+            stock: 4,
+            lowStockThreshold: 5,
+            memo: '食後30分以内に水またはぬるま湯で服用',
+            frequencyType: 'daily',
+            startDate: todayStr,
+            intervalDays: 2,
+            weekdays: [1, 3, 5],
+            timings: ['after_lunch'],
+            ingredients: []
+          },
+          {
+            id: 'sample_supp_1',
+            type: 'supp',
+            name: '【サンプル】マルチビタミン＆ミネラル',
+            dosage: '2粒',
+            stock: 25,
+            lowStockThreshold: 5,
+            memo: '朝食後に水で摂取',
+            frequencyType: 'daily',
+            startDate: todayStr,
+            intervalDays: 2,
+            weekdays: [1, 3, 5],
+            timings: ['after_breakfast'],
+            ingredients: ['multi_vit_min']
+          },
+          {
+            id: 'sample_supp_2',
+            type: 'supp',
+            name: '【サンプル】ヘム鉄・葉酸サプリ',
+            dosage: '2粒',
+            stock: 18,
+            lowStockThreshold: 5,
+            memo: '隔日（1日おき）の夕食後に水で摂取（お茶は避ける）',
+            frequencyType: 'every_other',
+            startDate: todayStr,
+            intervalDays: 2,
+            weekdays: [1, 3, 5],
+            timings: ['after_dinner'],
+            ingredients: ['iron_folic']
+          }
+        ],
+        logs: {
+          [todayStr]: {
+            sample_supp_1_after_breakfast: {
+              taken: true,
+              time: timeInfo.displayTime,
+              sortMinutes: timeInfo.sortMinutes,
+              isRetroactive: false
+            }
+          }
+        }
+      };
+    }
+
+    /**
+     * 深夜4:00（28:00）日付切り替わり基準のユーティリティ
+     */
+    function getLogicalNowDate(now = new Date()) {
+      const shifted = new Date(now.getTime() - 4 * 60 * 60 * 1000);
+      return shifted;
+    }
+
+    function formatDateStr(dateObj) {
+      const y = dateObj.getFullYear();
+      const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+      const d = String(dateObj.getDate()).padStart(2, '0');
       return `${y}-${m}-${d}`;
     }
 
-    function formatJapaneseDate(dateKey) {
-      const [y, m, d] = dateKey.split('-').map(Number);
-      const dt = new Date(y, m - 1, d);
-      const days = ['日', '月', '火', '水', '木', '金', '土'];
-      return `${y}年${m}月${d}日（${days[dt.getDay()]}）`;
+    function getTodayStr() {
+      return formatDateStr(getLogicalNowDate(new Date()));
     }
 
-    function showToast(msg) {
-      const box = document.getElementById('toast-box');
-      if (!box) return;
-      box.textContent = msg;
-      box.classList.remove('hidden');
-      setTimeout(() => box.classList.add('hidden'), 2800);
+    function parseDateStr(str) {
+      const [y, m, d] = (str || getTodayStr()).split('-').map(Number);
+      return new Date(y, (m || 1) - 1, d || 1);
     }
 
-    function loadState() {
-      try {
-        const savedMeds = localStorage.getItem(STORAGE_KEY_MEDS);
-        const savedLogs = localStorage.getItem(STORAGE_KEY_LOGS);
-        medications = savedMeds ? JSON.parse(savedMeds) : [];
-        intakeLogs = savedLogs ? JSON.parse(savedLogs) : {};
-      } catch (e) {
-        medications = [];
-        intakeLogs = {};
+    function addDaysToDateStr(dateStr, days) {
+      const dt = parseDateStr(dateStr);
+      dt.setDate(dt.getDate() + days);
+      return formatDateStr(dt);
+    }
+
+    function formatJapaneseDate(dateStr) {
+      const dt = parseDateStr(dateStr);
+      const w = WEEKDAY_LABELS[dt.getDay()];
+      return `${dt.getFullYear()}年${dt.getMonth() + 1}月${dt.getDate()}日（${w}）`;
+    }
+
+    /**
+     * 現在時刻または指定時刻を28時間制（深夜0:00〜3:59は24:00〜27:59）で記録・表示する
+     */
+    function buildRecordTimeInfo(now = new Date()) {
+      const h = now.getHours();
+      const m = String(now.getMinutes()).padStart(2, '0');
+      if (h < 4) {
+        const h28 = h + 24;
+        return {
+          displayTime: `${h28}:${m}（深夜${h}:${m}）`,
+          sortMinutes: h28 * 60 + now.getMinutes()
+        };
       }
+      const hh = String(h).padStart(2, '0');
+      return {
+        displayTime: `${hh}:${m}`,
+        sortMinutes: h * 60 + now.getMinutes()
+      };
     }
 
-    function saveState() {
-      try {
-        localStorage.setItem(STORAGE_KEY_MEDS, JSON.stringify(medications));
-        localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(intakeLogs));
-      } catch (e) {
-        showToast('ブラウザの保存容量がいっぱいです');
+    function buildRetroTimeInfo(timeStr, isAfterMidnight) {
+      const [rawH, rawM] = (timeStr || '08:00').split(':').map(Number);
+      const h = Number.isFinite(rawH) ? rawH : 8;
+      const m = String(Number.isFinite(rawM) ? rawM : 0).padStart(2, '0');
+      if (isAfterMidnight || h < 4) {
+        const h24 = h % 24;
+        const h28 = h24 + 24;
+        return {
+          displayTime: `${h28}:${m}（深夜${h24}:${m}）`,
+          sortMinutes: h28 * 60 + Number(m)
+        };
       }
+      const hh = String(h).padStart(2, '0');
+      return {
+        displayTime: `${hh}:${m}`,
+        sortMinutes: h * 60 + Number(m)
+      };
     }
 
-    function isScheduledToday(med, todayKey) {
-      if (med.cycle === 'alternate' && med.startDate) {
-        const start = new Date(med.startDate + 'T00:00:00');
-        const current = new Date(todayKey + 'T00:00:00');
-        const diffDays = Math.round((current - start) / (1000 * 60 * 60 * 24));
-        return diffDays >= 0 && diffDays % 2 === 0;
+    /**
+     * 隔日・曜日指定・◯日ごとの服用予定日判定
+     */
+    function isMedicationScheduledForDate(med, dateStr) {
+      const freq = med.frequencyType || 'daily';
+      if (freq === 'daily') return true;
+
+      const targetDt = parseDateStr(dateStr);
+      if (freq === 'weekdays') {
+        const days = Array.isArray(med.weekdays) ? med.weekdays : [];
+        return days.includes(targetDt.getDay());
+      }
+
+      const startStr = med.startDate || getTodayStr();
+      const startDt = parseDateStr(startStr);
+      const diffMs = targetDt.getTime() - startDt.getTime();
+      const diffDays = Math.round(diffMs / (24 * 60 * 60 * 1000));
+      if (diffDays < 0) return false;
+
+      if (freq === 'every_other') {
+        return diffDays % 2 === 0;
+      }
+      if (freq === 'custom_days') {
+        const step = Math.max(2, Number(med.intervalDays) || 2);
+        return diffDays % step === 0;
       }
       return true;
     }
 
-    function getCycleLabel(cycle) {
-      if (cycle === 'alternate') return '1日おき（隔日）';
-      if (cycle === 'as_needed') return '必要なとき（頓服）';
+    function getNextScheduledDate(med, fromDateStr) {
+      for (let i = 1; i <= 60; i++) {
+        const candidate = addDaysToDateStr(fromDateStr, i);
+        if (isMedicationScheduledForDate(med, candidate)) {
+          return candidate;
+        }
+      }
+      return null;
+    }
+
+    function getFrequencyBadgeLabel(med) {
+      const freq = med.frequencyType || 'daily';
+      if (freq === 'daily') return '毎日';
+      if (freq === 'every_other') return '隔日（1日おき）';
+      if (freq === 'weekdays') {
+        const labels = (med.weekdays || []).sort((a, b) => a - b).map((d) => WEEKDAY_LABELS[d]).join('・');
+        return labels ? `毎週 ${labels}` : '曜日指定';
+      }
+      if (freq === 'custom_days') {
+        return `${med.intervalDays || 2}日ごと`;
+      }
       return '毎日';
     }
 
-    function toggleAddForm() {
-      const panel = document.getElementById('add-med-panel');
-      panel.classList.toggle('hidden');
-      if (!panel.classList.contains('hidden')) {
-        document.getElementById('med-name-input').focus();
+    /**
+     * Firebase 初期化（プレビュー環境 blob: / file: では安全にローカルモードで動作）
+     */
+    const canUseFirebaseCloud =
+      (window.location.protocol === 'http:' || window.location.protocol === 'https:') &&
+      window.location.origin !== 'null';
+
+    let firebaseAuth = null;
+    let firebaseDb = null;
+
+    if (canUseFirebaseCloud) {
+      try {
+        const app = initializeApp(FIREBASE_CONFIG);
+        firebaseAuth = getAuth(app);
+        firebaseDb = getFirestore(app);
+      } catch (e) {
+        console.warn('Firebase init fallback to local mode:', e);
       }
     }
 
-    function handleAddMedication(event) {
-      event.preventDefault();
-      const name = document.getElementById('med-name-input').value.trim();
-      const timing = document.getElementById('med-timing-select').value;
-      const cycle = document.getElementById('med-cycle-select').value;
-      const dose = document.getElementById('med-dose-input').value.trim();
+    /**
+     * アプリケーション状態
+     */
+    let currentUser = null; // { uid, email, displayName, emailVerified, isGuest, isLocalFallback }
+    let authMode = 'signup';
+    let currentTab = 'today';
+    let todayFilter = 'all';
+    let medsFilter = 'all';
+    let calendarFilter = 'all';
+    let calendarMonthDate = parseDateStr(getTodayStr());
+    let selectedCalendarDate = getTodayStr();
 
-      if (!name) return;
+    let modalMedType = 'rx';
+    let modalFreqType = 'daily';
+    let modalWeekdays = [1, 3, 5];
+    let modalStartDate = getTodayStr();
+    let modalIntervalDays = 2;
+    let modalSelectedIngredients = [];
+    let modalSelectedTimings = [];
+    let showAllIngredientsOverride = false;
+    let currentRefillMedId = null;
+    let currentRetroTarget = null;
+    let confirmCallback = null;
 
-      const newMed = {
-        id: 'med_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
-        name,
-        timing,
-        cycle,
-        dose,
-        startDate: getLogicalDateKey()
-      };
-
-      medications.push(newMed);
-      saveState();
-      document.getElementById('add-med-form').reset();
-      document.getElementById('add-med-panel').classList.add('hidden');
-      renderApp();
-      showToast(`「${name}」を登録しました`);
-    }
-
-    function toggleIntake(medId) {
-      const todayKey = getLogicalDateKey();
-      if (!intakeLogs[todayKey]) intakeLogs[todayKey] = {};
-
-      if (intakeLogs[todayKey][medId]) {
-        delete intakeLogs[todayKey][medId];
-        showToast('服用記録を取り消しました');
-      } else {
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, '0');
-        const mm = String(now.getMinutes()).padStart(2, '0');
-        intakeLogs[todayKey][medId] = `${hh}:${mm}`;
-        showToast('服用を記録しました！');
-      }
-      saveState();
-      renderApp();
-    }
-
-    function deleteMedication(medId) {
-      medications = medications.filter(m => m.id !== medId);
-      saveState();
-      renderApp();
-      showToast('お薬を削除しました');
-    }
-
-    function setTimingFilter(filterKey, btnEl) {
-      currentFilter = filterKey;
-      document.querySelectorAll('.timing-tab').forEach(b => b.classList.remove('active'));
-      if (btnEl) btnEl.classList.add('active');
-      renderApp();
-    }
-
-    function loadSampleMedications() {
-      const todayKey = getLogicalDateKey();
-      const samples = [
-        { id: 'sample_1_' + Date.now(), name: 'マルチビタミン（サンプル）', timing: '朝食後', cycle: 'daily', dose: '1粒・水またはぬるま湯で', startDate: todayKey },
-        { id: 'sample_2_' + Date.now(), name: '胃腸薬（サンプル）', timing: '夕食前', cycle: 'daily', dose: '1包・食事の30分前', startDate: todayKey },
-        { id: 'sample_3_' + Date.now(), name: '整腸サプリ（サンプル）', timing: '寝る前', cycle: 'alternate', dose: '2錠（1日おき）', startDate: todayKey }
-      ];
-      medications = medications.concat(samples);
-      saveState();
-      renderApp();
-      showToast('お試しサンプルのお薬を追加しました');
-    }
-
-    function openResetConfirmModal() {
-      document.getElementById('reset-modal').classList.remove('hidden');
-    }
-
-    function executeResetAllData() {
-      medications = [];
-      intakeLogs = {};
-      saveState();
-      closeModal('reset-modal');
-      renderApp();
-      showToast('すべてのデータを初期化しました');
-    }
-
-    function openHistoryModal() {
-      const body = document.getElementById('history-list-body');
-      body.innerHTML = '';
-
-      for (let i = 0; i < 7; i++) {
-        const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
-        const key = getLogicalDateKey(d);
-        const dayLogs = intakeLogs[key] || {};
-        const entries = Object.entries(dayLogs);
-
-        const row = document.createElement('div');
-        row.style.cssText = 'padding:12px 14px; border:1px solid var(--border-soft); border-radius:12px; background:var(--surface-muted);';
-
-        let detailHtml = '<span style="font-size:0.82rem; color:var(--text-muted);">記録なし</span>';
-        if (entries.length > 0) {
-          detailHtml = entries.map(([mId, timeStr]) => {
-            const med = medications.find(m => m.id === mId);
-            const medTitle = med ? escapeHtml(med.name) : '削除済みのお薬';
-            return `<div style="font-size:0.84rem; color:var(--primary-dark); font-weight:700;">✅ ${medTitle}（${escapeHtml(timeStr)} 服用）</div>`;
-          }).join('');
-        }
-
-        row.innerHTML = `
-          <div style="font-size:0.86rem; font-weight:800; margin-bottom:4px;">${formatJapaneseDate(key)}</div>
-          ${detailHtml}
-        `;
-        body.appendChild(row);
-      }
-
-      document.getElementById('history-modal').classList.remove('hidden');
-    }
-
-    function closeModal(id) {
-      document.getElementById(id).classList.add('hidden');
-    }
+    let appState = {
+      nickname: '',
+      medications: [],
+      logs: {} // { 'YYYY-MM-DD': { 'medId_slotId': { taken: true, time: '08:15', sortMinutes: 495, isRetroactive: false } } }
+    };
 
     function escapeHtml(str) {
+      if (str === null || str === undefined) return '';
       return String(str)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
-    function renderApp() {
-      const todayKey = getLogicalDateKey();
-      document.getElementById('logical-date-display').textContent = formatJapaneseDate(todayKey);
+    function showToast(message, type = 'default') {
+      const container = document.getElementById('toast-container');
+      if (!container) return;
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.textContent = message;
+      container.appendChild(el);
+      setTimeout(() => {
+        el.remove();
+      }, 3200);
+    }
 
-      const todayLogs = intakeLogs[todayKey] || {};
-      const todayMeds = medications.filter(m => isScheduledToday(m, todayKey));
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.remove('hidden');
+    }
 
-      // 達成率計算（頓服以外を分母にする）
-      const regularMeds = todayMeds.filter(m => m.cycle !== 'as_needed');
-      const takenRegularCount = regularMeds.filter(m => Boolean(todayLogs[m.id])).length;
-      document.getElementById('progress-pill').textContent = `達成：${takenRegularCount} / ${regularMeds.length}`;
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) el.classList.add('hidden');
+    }
 
-      // フィルター適用
-      const filteredMeds = todayMeds.filter(m => {
-        if (currentFilter === 'ALL') return true;
-        if (currentFilter === '朝') return m.timing.includes('起') || m.timing.includes('朝');
-        if (currentFilter === '昼') return m.timing.includes('昼');
-        if (currentFilter === '夕') return m.timing.includes('夕');
-        if (currentFilter === '寝る前') return m.timing === '寝る前';
-        if (currentFilter === '頓服') return m.timing.includes('頓服') || m.cycle === 'as_needed';
+    function openConfirmDialog(title, message, okLabel, onOk) {
+      document.getElementById('confirm-modal-title').textContent = title;
+      document.getElementById('confirm-modal-message').textContent = message;
+      const okBtn = document.getElementById('confirm-modal-ok-btn');
+      okBtn.textContent = okLabel || '実行する';
+      confirmCallback = onOk;
+      okBtn.onclick = () => {
+        closeModal('confirm-modal');
+        if (typeof confirmCallback === 'function') confirmCallback();
+      };
+      openModal('confirm-modal');
+    }
+
+    /**
+     * 運営情報・広告枠・コラム一覧の初期反映
+     */
+    function applySiteInfoAndAds() {
+      document.querySelectorAll('.site-operator-name').forEach((el) => {
+        el.textContent = SITE_INFO.operatorName;
+      });
+      document.querySelectorAll('.site-contact-email').forEach((el) => {
+        el.textContent = SITE_INFO.contactEmail;
+      });
+      document.querySelectorAll('.site-updated-date').forEach((el) => {
+        el.textContent = SITE_INFO.updatedDate;
+      });
+
+      const adEl = document.getElementById('ad-slot-content');
+      if (adEl) {
+        if (AD_CONFIG.provider === 'adsense') {
+          adEl.innerHTML = `<ins class="adsbygoogle" style="display:block" data-ad-client="${escapeHtml(AD_CONFIG.adsenseClientId)}" data-ad-slot="${escapeHtml(AD_CONFIG.adsenseSlotId)}" data-ad-format="auto" data-full-width-responsive="true"></ins>`;
+        } else {
+          adEl.innerHTML = `
+            <div style="display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+              <div>
+                <strong style="color:var(--text-main);">📖 お薬・サプリの「飲み時」解説コラム公開中！</strong>
+                <div style="font-size:0.78rem; margin-top:2px;">処方薬の「食間」の正しい意味や、ビタミン・鉄分・乳酸菌サプリの吸収ポイントを分かりやすく解説しています。</div>
+              </div>
+              <a href="columns.html" class="btn btn-secondary btn-sm">コラムを読む →</a>
+            </div>
+          `;
+        }
+      }
+    }
+
+    /**
+     * コラムピックアップ（最新3記事＆よく読まれる3記事）描画
+     */
+    function renderColumnShowcase(containerId) {
+      const container = document.getElementById(containerId);
+      if (!container) return;
+
+      let clicks = {};
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.ARTICLE_VIEWS);
+        clicks = raw ? JSON.parse(raw) : {};
+      } catch (e) {
+        clicks = {};
+      }
+
+      const latestThree = [...EDUCATIONAL_ARTICLES]
+        .sort((a, b) => b.publishedAt.localeCompare(a.publishedAt))
+        .slice(0, 3);
+
+      const popularThree = [...EDUCATIONAL_ARTICLES]
+        .map((art) => ({
+          ...art,
+          totalScore: (art.popularScore || 0) + (clicks[art.id] || 0) * 5
+        }))
+        .sort((a, b) => b.totalScore - a.totalScore)
+        .slice(0, 3);
+
+      const renderCards = (list, mode) =>
+        list
+          .map((art, idx) => {
+            const badgeHtml =
+              mode === 'latest'
+                ? `<span class="badge-new">NEW</span>`
+                : `<span class="badge-rank-${idx + 1}">人気 No.${idx + 1}</span>`;
+            return `
+              <a href="columns.html?id=${encodeURIComponent(art.id)}" class="column-card">
+                <div>
+                  <div style="display:flex; align-items:center; justify-content:space-between; gap:6px; margin-bottom:8px; flex-wrap:wrap;">
+                    <div style="display:flex; align-items:center; gap:6px;">
+                      ${badgeHtml}
+                      <span class="badge" style="background:var(--primary-light); color:var(--primary-hover); border:1px solid var(--primary-border);">${escapeHtml(art.categoryLabel)}</span>
+                    </div>
+                    <span style="font-size:0.72rem; color:var(--text-muted); font-weight:700;">${escapeHtml(art.publishedAt.replace(/-/g, '.'))}</span>
+                  </div>
+                  <h3>${escapeHtml(art.title)}</h3>
+                  <p>${escapeHtml(art.summary)}</p>
+                </div>
+                <div style="display:flex; align-items:center; justify-content:space-between; padding-top:8px; border-top:1px dashed var(--border-color); font-size:0.78rem;">
+                  <span style="color:var(--text-muted); font-weight:700;">⏱ ${escapeHtml(art.readTime)}</span>
+                  <span style="color:var(--primary-hover); font-weight:800;">記事を読む →</span>
+                </div>
+              </a>
+            `;
+          })
+          .join('');
+
+      container.innerHTML = `
+        <div class="column-group-block">
+          <div class="column-group-header">
+            <h3 class="column-group-title">🆕 最新3記事</h3>
+          </div>
+          <div class="column-cards-grid">${renderCards(latestThree, 'latest')}</div>
+        </div>
+        <div class="column-group-block" style="margin-bottom:0;">
+          <div class="column-group-header">
+            <h3 class="column-group-title">🔥 よく読まれる3記事</h3>
+          </div>
+          <div class="column-cards-grid">${renderCards(popularThree, 'popular')}</div>
+        </div>
+      `;
+    }
+
+    /**
+     * お問い合わせフォーム処理
+     */
+    function handleContactSubmit(event) {
+      event.preventDefault();
+      const cat = document.getElementById('contact-category').value;
+      const name = document.getElementById('contact-name').value.trim();
+      const email = document.getElementById('contact-email').value.trim();
+      const msg = document.getElementById('contact-message').value.trim();
+
+      const bodyText = [
+        `【お問い合わせ種別】${cat}`,
+        `【お名前】${name}`,
+        `【返信先メールアドレス】${email}`,
+        `【お問い合わせ内容】`,
+        msg
+      ].join('\n');
+
+      const subject = encodeURIComponent(`【ノミドキお問い合わせ】${cat}`);
+      const body = encodeURIComponent(bodyText);
+      const mailto = `mailto:${SITE_INFO.contactEmail}?subject=${subject}&body=${body}`;
+
+      document.getElementById('contact-formatted-text').value = bodyText;
+      const mailtoLink = document.getElementById('contact-mailto-link');
+      mailtoLink.href = mailto;
+      document.getElementById('contact-result-box').classList.remove('hidden');
+
+      window.location.href = mailto;
+      showToast('送信内容を作成しました', 'success');
+    }
+
+    function copyContactText() {
+      const textarea = document.getElementById('contact-formatted-text');
+      textarea.select();
+      document.execCommand('copy');
+      showToast('お問い合わせ内容をコピーしました', 'success');
+    }
+
+    /**
+     * 認証・パスワードバリデーション・目玉アイコン表示切替
+     */
+    function validatePasswordStrength(pw) {
+      const hasMinLen = pw.length >= 6;
+      const hasAlpha = /[A-Za-z]/.test(pw);
+      const hasDigit = /[0-9]/.test(pw);
+      const isAsciiOnly = /^[!-~]+$/.test(pw);
+      return {
+        hasMinLen,
+        hasMix: hasAlpha && hasDigit && isAsciiOnly,
+        isValid: hasMinLen && hasAlpha && hasDigit && isAsciiOnly
+      };
+    }
+
+    function updatePasswordRulesIndicator(val) {
+      const res = validatePasswordStrength(val || '');
+      const lenEl = document.getElementById('pw-rule-length');
+      const mixEl = document.getElementById('pw-rule-mix');
+      if (lenEl) {
+        lenEl.classList.toggle('valid', res.hasMinLen);
+        lenEl.textContent = `${res.hasMinLen ? '✓' : '○'} 6文字以上で入力`;
+      }
+      if (mixEl) {
+        mixEl.classList.toggle('valid', res.hasMix);
+        mixEl.textContent = `${res.hasMix ? '✓' : '○'} 半角英字と半角数字の2種類を組み合わせる（全角・スペース不可）`;
+      }
+    }
+
+    function togglePasswordVisibility() {
+      const input = document.getElementById('auth-password');
+      const openIcon = document.getElementById('eye-icon-open');
+      const closedIcon = document.getElementById('eye-icon-closed');
+      if (!input) return;
+
+      const isPw = input.type === 'password';
+      input.type = isPw ? 'text' : 'password';
+      openIcon.classList.toggle('hidden', isPw);
+      closedIcon.classList.toggle('hidden', !isPw);
+    }
+
+    function openAuthModal(mode = 'signup') {
+      setAuthMode(mode);
+      document.getElementById('auth-form').reset();
+      const pwInput = document.getElementById('auth-password');
+      if (pwInput) pwInput.type = 'password';
+      document.getElementById('eye-icon-open')?.classList.remove('hidden');
+      document.getElementById('eye-icon-closed')?.classList.add('hidden');
+      updatePasswordRulesIndicator('');
+      openModal('auth-modal');
+    }
+
+    function openGuestConfirmModal() {
+      openModal('guest-confirm-modal');
+    }
+
+    function startGuestMode() {
+      closeModal('guest-confirm-modal');
+      let sampleData = null;
+      try {
+        const raw = localStorage.getItem(STORAGE_KEYS.GUEST_DATA);
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (parsed && Array.isArray(parsed.medications)) {
+            sampleData = parsed;
+          }
+        }
+      } catch (e) {}
+
+      if (!sampleData) {
+        sampleData = createGuestSampleData();
+        localStorage.setItem(STORAGE_KEYS.GUEST_DATA, JSON.stringify(sampleData));
+      }
+
+      enterAppSession(
+        {
+          uid: 'guest_user',
+          email: '',
+          displayName: sampleData.nickname || 'ゲスト（体験中）',
+          emailVerified: true,
+          isGuest: true,
+          isLocalFallback: true
+        },
+        sampleData
+      );
+      showToast('サンプルデータ入りのゲストモードを開始しました', 'success');
+    }
+
+    function resetGuestSampleData() {
+      openConfirmDialog(
+        'サンプルデータの初期化',
+        'ゲストモードの体験データを最初のサンプル状態に戻しますか？',
+        '初期状態に戻す',
+        async () => {
+          const fresh = createGuestSampleData();
+          localStorage.setItem(STORAGE_KEYS.GUEST_DATA, JSON.stringify(fresh));
+          appState = fresh;
+          renderAllAppViews();
+          showToast('サンプルデータを初期状態に戻しました', 'success');
+        }
+      );
+    }
+
+    function setAuthMode(mode) {
+      authMode = mode;
+      const isSignup = mode === 'signup';
+      document.getElementById('auth-modal-title').textContent = isSignup ? '無料会員登録' : 'ログイン';
+      document.getElementById('auth-tab-signup').className = isSignup ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
+      document.getElementById('auth-tab-login').className = !isSignup ? 'btn btn-primary btn-sm' : 'btn btn-outline btn-sm';
+      document.getElementById('auth-nickname-group').classList.toggle('hidden', !isSignup);
+      document.getElementById('pw-rules-box').classList.toggle('hidden', !isSignup);
+      document.getElementById('auth-forgot-wrap').classList.toggle('hidden', isSignup);
+      document.getElementById('auth-submit-btn').textContent = isSignup ? '無料で登録して始める' : 'ログインする';
+    }
+
+    async function sendPasswordResetFromModal() {
+      const email = document.getElementById('auth-email').value.trim();
+      if (!email) {
+        showToast('パスワードを再設定するメールアドレスを入力欄にご記入ください', 'warning');
+        return;
+      }
+      if (!firebaseAuth) {
+        showToast('ローカルモードではメール送信は利用できません', 'warning');
+        return;
+      }
+      try {
+        await sendPasswordResetEmail(firebaseAuth, email);
+        showToast(`${email} 宛にパスワード再設定メールを送信しました`, 'success');
+      } catch (err) {
+        showToast('再設定メールの送信に失敗しました。メールアドレスをご確認ください', 'warning');
+      }
+    }
+
+    async function checkEmailVerificationStatus() {
+      if (!firebaseAuth || !firebaseAuth.currentUser) return;
+      try {
+        await firebaseAuth.currentUser.reload();
+        if (firebaseAuth.currentUser.emailVerified) {
+          currentUser.emailVerified = true;
+          renderHeaderAndView();
+          showToast('メールアドレスの認証完了を確認しました！', 'success');
+        } else {
+          showToast('まだメール内のリンクがクリックされていません。受信トレイをご確認ください', 'warning');
+        }
+      } catch (e) {
+        showToast('認証状態の確認に失敗しました', 'warning');
+      }
+    }
+
+    async function resendVerificationEmail() {
+      if (!firebaseAuth || !firebaseAuth.currentUser) return;
+      try {
+        await sendEmailVerification(firebaseAuth.currentUser);
+        showToast('確認メールを再送信しました。受信トレイをご確認ください', 'success');
+      } catch (e) {
+        showToast('送信間隔が短すぎるため、少し時間を置いてから再度お試しください', 'warning');
+      }
+    }
+
+    async function submitAuthForm(event) {
+      event.preventDefault();
+      const email = document.getElementById('auth-email').value.trim();
+      const password = document.getElementById('auth-password').value;
+      const rawNick = document.getElementById('auth-nickname').value.trim();
+
+      if (authMode === 'signup') {
+        const pwCheck = validatePasswordStrength(password);
+        if (!pwCheck.isValid) {
+          showToast('パスワードは半角英字と半角数字を組み合わせた6文字以上で入力してください', 'warning');
+          return;
+        }
+      }
+
+      const defaultNick = rawNick || email.split('@')[0] || 'ユーザー';
+      const inheritedFromGuest = Boolean(currentUser && currentUser.isGuest);
+      const guestSnapshot = inheritedFromGuest
+        ? {
+            nickname: defaultNick,
+            medications: JSON.parse(JSON.stringify(appState.medications || [])),
+            logs: JSON.parse(JSON.stringify(appState.logs || {}))
+          }
+        : null;
+
+      // Firebase利用可能環境
+      if (firebaseAuth) {
+        try {
+          if (authMode === 'signup') {
+            const cred = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+            await updateProfile(cred.user, { displayName: defaultNick });
+            try {
+              await sendEmailVerification(cred.user);
+            } catch (mailErr) {
+              console.warn('Verification email send warning:', mailErr);
+            }
+            appState = guestSnapshot || { nickname: defaultNick, medications: [], logs: {} };
+            await saveCloudData(cred.user.uid);
+            localStorage.removeItem(STORAGE_KEYS.GUEST_DATA);
+            showToast(
+              inheritedFromGuest
+                ? '会員登録完了！ゲストのデータを引き継ぎ、確認メールを送信しました'
+                : '会員登録完了！確認メールを送信しました',
+              'success'
+            );
+          } else {
+            await signInWithEmailAndPassword(firebaseAuth, email, password);
+            localStorage.removeItem(STORAGE_KEYS.GUEST_DATA);
+            showToast('ログインしました', 'success');
+          }
+          closeModal('auth-modal');
+          return;
+        } catch (err) {
+          const code = err?.code || '';
+          if (code === 'auth/email-already-in-use') {
+            showToast('このメールアドレスは既に登録されています', 'warning');
+          } else if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+            showToast('メールアドレスまたはパスワードが正しくありません', 'warning');
+          } else {
+            showToast('認証エラーが発生しました。入力内容をご確認ください', 'warning');
+          }
+          return;
+        }
+      }
+
+      // ローカルフォールバック環境（プレビュー / file: 等）
+      const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.LOCAL_USERS) || '{}');
+      if (authMode === 'signup') {
+        if (users[email]) {
+          showToast('このメールアドレスは既に登録されています', 'warning');
+          return;
+        }
+        const initialData = guestSnapshot || { nickname: defaultNick, medications: [], logs: {} };
+        users[email] = { uid: 'local_' + Date.now(), email, password, data: initialData };
+        localStorage.setItem(STORAGE_KEYS.LOCAL_USERS, JSON.stringify(users));
+        localStorage.setItem(STORAGE_KEYS.LOCAL_SESSION, email);
+        localStorage.removeItem(STORAGE_KEYS.GUEST_DATA);
+        enterAppSession({ uid: users[email].uid, email, displayName: defaultNick, emailVerified: true, isGuest: false, isLocalFallback: true }, initialData);
+        closeModal('auth-modal');
+        showToast(inheritedFromGuest ? '会員登録完了！ゲストのデータを引き継ぎました' : '会員登録が完了しました', 'success');
+      } else {
+        const found = users[email];
+        if (!found || found.password !== password) {
+          showToast('メールアドレスまたはパスワードが正しくありません', 'warning');
+          return;
+        }
+        localStorage.setItem(STORAGE_KEYS.LOCAL_SESSION, email);
+        localStorage.removeItem(STORAGE_KEYS.GUEST_DATA);
+        enterAppSession({ uid: found.uid, email, displayName: found.data.nickname || defaultNick, emailVerified: true, isGuest: false, isLocalFallback: true }, found.data);
+        closeModal('auth-modal');
+        showToast('ログインしました', 'success');
+      }
+    }
+
+    /**
+     * ログアウト・ブランドクリック
+     */
+    async function handleLogout() {
+      if (currentUser && !currentUser.isGuest && firebaseAuth) {
+        await signOut(firebaseAuth);
+      }
+      localStorage.removeItem(STORAGE_KEYS.LOCAL_SESSION);
+      currentUser = null;
+      renderHeaderAndView();
+      showToast(currentUser?.isGuest ? 'お試し体験を終了しました' : 'ログアウトしました');
+    }
+            appState = { nickname: defaultNick, medications: [], logs: {} };
+            await saveCloudData(cred.user.uid);
+            showToast('会員登録完了！確認メールを送信しました', 'success');
+          } else {
+            await signInWithEmailAndPassword(firebaseAuth, email, password);
+            showToast('ログインしました', 'success');
+          }
+          closeModal('auth-modal');
+          return;
+        } catch (err) {
+          const code = err?.code || '';
+          if (code === 'auth/email-already-in-use') {
+            showToast('このメールアドレスは既に登録されています', 'warning');
+          } else if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
+            showToast('メールアドレスまたはパスワードが正しくありません', 'warning');
+          } else {
+            showToast('認証エラーが発生しました。入力内容をご確認ください', 'warning');
+          }
+          return;
+        }
+      }
+
+      // ローカルフォールバック環境（プレビュー / file: 等）
+      const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.LOCAL_USERS) || '{}');
+      if (authMode === 'signup') {
+        if (users[email]) {
+          showToast('このメールアドレスは既に登録されています', 'warning');
+          return;
+        }
+        const initialData = { nickname: defaultNick, medications: [], logs: {} };
+        users[email] = { uid: 'local_' + Date.now(), email, password, data: initialData };
+        localStorage.setItem(STORAGE_KEYS.LOCAL_USERS, JSON.stringify(users));
+        localStorage.setItem(STORAGE_KEYS.LOCAL_SESSION, email);
+        enterAppSession({ uid: users[email].uid, email, displayName: defaultNick, emailVerified: true, isLocalFallback: true }, initialData);
+        closeModal('auth-modal');
+        showToast('会員登録が完了しました', 'success');
+      } else {
+        const found = users[email];
+        if (!found || found.password !== password) {
+          showToast('メールアドレスまたはパスワードが正しくありません', 'warning');
+          return;
+        }
+        localStorage.setItem(STORAGE_KEYS.LOCAL_SESSION, email);
+        enterAppSession({ uid: found.uid, email, displayName: found.data.nickname || defaultNick, emailVerified: true, isLocalFallback: true }, found.data);
+        closeModal('auth-modal');
+        showToast('ログインしました', 'success');
+      }
+    }
+
+    /**
+     * ログアウト・ブランドクリック
+     */
+    async function handleLogout() {
+      if (currentUser && firebaseAuth) {
+        await signOut(firebaseAuth);
+      }
+      localStorage.removeItem(STORAGE_KEYS.LOCAL_SESSION);
+      currentUser = null;
+      renderHeaderAndView();
+      showToast('ログアウトしました');
+    }
+
+    function handleBrandClick(event) {
+      if (currentUser) {
+        event.preventDefault();
+        switchTab('today');
+      }
+    }
+
+    /**
+     * データ保存・読み込み（Firestore / LocalStorage）
+     */
+    async function saveCloudData(uid) {
+      if (!firebaseDb || !uid) return;
+      try {
+        await setDoc(doc(firebaseDb, 'users', uid), appState, { merge: true });
+      } catch (e) {
+        console.warn('Firestore save warning:', e);
+      }
+    }
+
+    async function loadCloudData(uid, fallbackName) {
+      if (!firebaseDb || !uid) return { nickname: fallbackName, medications: [], logs: {} };
+      try {
+        const snap = await getDoc(doc(firebaseDb, 'users', uid));
+        if (snap.exists()) {
+          const d = snap.data();
+          return {
+            nickname: d.nickname || fallbackName,
+            medications: Array.isArray(d.medications) ? d.medications : [],
+            logs: d.logs && typeof d.logs === 'object' ? d.logs : {}
+          };
+        }
+      } catch (e) {
+        console.warn('Firestore load warning:', e);
+      }
+      return { nickname: fallbackName, medications: [], logs: {} };
+    }
+
+    async function persistAppState() {
+      if (!currentUser) return;
+      if (currentUser.isGuest) {
+        localStorage.setItem(STORAGE_KEYS.GUEST_DATA, JSON.stringify(appState));
+        return;
+      }
+      if (currentUser.isLocalFallback) {
+        const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.LOCAL_USERS) || '{}');
+        if (users[currentUser.email]) {
+          users[currentUser.email].data = appState;
+          localStorage.setItem(STORAGE_KEYS.LOCAL_USERS, JSON.stringify(users));
+        }
+        return;
+      }
+      await saveCloudData(currentUser.uid);
+    }
+
+    function enterAppSession(userObj, dataObj) {
+      currentUser = userObj;
+      appState = {
+        nickname: dataObj.nickname || userObj.displayName || 'ユーザー',
+        medications: Array.isArray(dataObj.medications) ? dataObj.medications : [],
+        logs: dataObj.logs && typeof dataObj.logs === 'object' ? dataObj.logs : {}
+      };
+      renderHeaderAndView();
+      renderAllAppViews();
+    }
+
+    function renderHeaderAndView() {
+      const lpView = document.getElementById('landing-view');
+      const appView = document.getElementById('app-view');
+      const lpNav = document.getElementById('lp-header-nav');
+      const authArea = document.getElementById('header-auth-area');
+      const mobileNav = document.getElementById('mobile-bottom-nav');
+      const guestBanner = document.getElementById('guest-mode-banner');
+      const verifyBanner = document.getElementById('email-verify-banner');
+      const deleteCard = document.getElementById('delete-account-card');
+
+      if (!currentUser) {
+        lpView.classList.remove('hidden');
+        appView.classList.add('hidden');
+        lpNav.classList.remove('hidden');
+        mobileNav.classList.add('hidden');
+        authArea.innerHTML = `
+          <button type="button" class="btn btn-ghost btn-sm" onclick="openGuestConfirmModal()">サンプルでお試し</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="openAuthModal('login')">ログイン</button>
+          <button type="button" class="btn btn-primary btn-sm" onclick="openAuthModal('signup')">無料会員登録</button>
+        `;
+        return;
+      }
+
+      lpView.classList.add('hidden');
+      appView.classList.remove('hidden');
+      lpNav.classList.add('hidden');
+      mobileNav.classList.remove('hidden');
+
+      const isGuest = Boolean(currentUser.isGuest);
+      guestBanner.classList.toggle('hidden', !isGuest);
+      verifyBanner.classList.toggle('hidden', isGuest || Boolean(currentUser.emailVerified || currentUser.isLocalFallback));
+      deleteCard.classList.toggle('hidden', isGuest);
+
+      const displayName = appState.nickname || currentUser.displayName || 'ユーザー';
+      if (isGuest) {
+        authArea.innerHTML = `
+          <span class="user-pill">🧪 ${escapeHtml(displayName)}</span>
+          <button type="button" class="btn btn-primary btn-sm" onclick="openAuthModal('signup')">無料会員登録</button>
+          <button type="button" class="btn btn-outline btn-sm" onclick="handleLogout()">体験終了</button>
+        `;
+      } else {
+        authArea.innerHTML = `
+          <span class="user-pill">👤 ${escapeHtml(displayName)}さん</span>
+          <button type="button" class="btn btn-outline btn-sm" onclick="handleLogout()">ログアウト</button>
+        `;
+      }
+    }
+
+    /**
+     * サプリメント間の栄養成分重複アラート
+     */
+    function renderOverlapAlerts() {
+      const container = document.getElementById('today-overlap-alerts');
+      if (!container) return;
+
+      const suppMeds = appState.medications.filter((m) => m.type === 'supp' && Array.isArray(m.ingredients) && m.ingredients.length > 0);
+      const groupMap = {};
+
+      suppMeds.forEach((med) => {
+        med.ingredients.forEach((tagId) => {
+          const tag = INGREDIENT_TAGS.find((t) => t.id === tagId);
+          if (!tag || !tag.overlapGroup) return;
+          if (!groupMap[tag.overlapGroup]) groupMap[tag.overlapGroup] = new Set();
+          groupMap[tag.overlapGroup].add(med.name);
+        });
+      });
+
+      const alerts = Object.entries(groupMap)
+        .filter(([, namesSet]) => namesSet.size >= 2)
+        .map(([, namesSet]) => Array.from(namesSet));
+
+      if (alerts.length === 0) {
+        container.innerHTML = '';
+        return;
+      }
+
+      container.innerHTML = alerts
+        .map(
+          (names) => `
+          <div class="alert-box alert-purple">
+            <strong>⚠️ サプリメント成分の重複チェック：</strong>
+            「${names.map(escapeHtml).join('」と「')}」に同系統の栄養成分が含まれている可能性があります。1日の摂取目安量を超えていないかパッケージ表示をご確認ください。
+          </div>
+        `
+        )
+        .join('');
+    }
+
+    async function recordMedicationTake(dateStr, medId, slotId) {
+      const med = appState.medications.find((m) => m.id === medId);
+      if (!med) return;
+
+      if (!appState.logs[dateStr]) appState.logs[dateStr] = {};
+      const key = `${medId}_${slotId}`;
+      if (appState.logs[dateStr][key]?.taken) return;
+
+      const timeInfo = buildRecordTimeInfo(new Date());
+      appState.logs[dateStr][key] = {
+        taken: true,
+        time: timeInfo.displayTime,
+        sortMinutes: timeInfo.sortMinutes,
+        isRetroactive: false
+      };
+
+      if (Number(med.stock) > 0) {
+        med.stock = Number(med.stock) - 1;
+      }
+
+      await persistAppState();
+      renderAllAppViews();
+      showToast(`「${med.name}」の服用を記録しました（${timeInfo.displayTime}）`, 'success');
+    }
+
+    function undoMedicationTake(dateStr, medId, slotId) {
+      const med = appState.medications.find((m) => m.id === medId);
+      const label = med ? med.name : 'このお薬';
+
+      openConfirmDialog(
+        '服用記録の取り消し',
+        `「${label}」の記録を取り消しますか？（差し引かれていた残薬数も自動で1回分元に戻ります）`,
+        '取り消す',
+        async () => {
+          if (appState.logs[dateStr] && appState.logs[dateStr][`${medId}_${slotId}`]) {
+            delete appState.logs[dateStr][`${medId}_${slotId}`];
+            if (med) {
+              med.stock = Number(med.stock || 0) + 1;
+            }
+            await persistAppState();
+            renderAllAppViews();
+            showToast('服用記録を取り消し、残薬数を戻しました');
+          }
+        }
+      );
+    }
+
+    /**
+     * ==========================================================================
+     * 2. 「お薬・サプリ一覧」タブ＆登録・編集・削除・補充
+     * ==========================================================================
+     */
+    function setMedsFilter(filter) {
+      medsFilter = filter;
+      document.querySelectorAll('[data-meds-filter]').forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-meds-filter') === filter);
+      });
+      renderMedsView();
+    }
+
+    function renderMedsView() {
+      const container = document.getElementById('meds-list-container');
+      if (!container) return;
+
+      const list = appState.medications.filter((m) => {
+        if (medsFilter === 'low') return Number(m.stock) <= Number(m.lowStockThreshold);
+        if (medsFilter !== 'all') return m.type === medsFilter;
         return true;
       });
 
-      const container = document.getElementById('med-list-container');
-      container.innerHTML = '';
-
-      if (filteredMeds.length === 0) {
+      if (list.length === 0) {
         container.innerHTML = `
-          <div class="empty-state">
-            <p style="font-weight:800; margin-bottom:6px;">表示するお薬がありません</p>
-            <p style="font-size:0.84rem; margin-bottom:14px;">右上の「＋ お薬を追加登録」または下の「お試しサンプルを追加」から登録できます。</p>
-            <button type="button" class="btn btn-primary btn-sm" onclick="toggleAddForm()">＋ お薬を登録する</button>
+          <div class="card" style="text-align:center; padding:28px;">
+            <p style="font-size:0.9rem; color:var(--text-secondary);">該当するお薬・サプリメントはありません。</p>
           </div>
         `;
         return;
       }
 
-      filteredMeds.forEach(med => {
-        const takenTime = todayLogs[med.id];
-        const isTaken = Boolean(takenTime);
+      container.innerHTML = list
+        .map((med) => {
+          const isLow = Number(med.stock) <= Number(med.lowStockThreshold);
+          const typeBadge =
+            med.type === 'rx'
+              ? '<span class="badge badge-rx">処方薬</span>'
+              : med.type === 'otc'
+              ? '<span class="badge badge-otc">市販薬</span>'
+              : '<span class="badge badge-supp">サプリメント</span>';
 
-        const item = document.createElement('div');
-        item.className = 'med-item' + (isTaken ? ' taken' : '');
+          const timingLabels = (med.timings || [])
+            .map((id) => TIMING_SLOTS.find((s) => s.id === id)?.label)
+            .filter(Boolean)
+            .join('・');
 
-        item.innerHTML = `
-          <div class="med-info">
-            <div class="med-badges">
-              <span class="badge badge-timing">${escapeHtml(med.timing)}</span>
-              <span class="badge badge-cycle">${escapeHtml(getCycleLabel(med.cycle))}</span>
-              ${isTaken ? `<span class="badge badge-taken">✓ ${escapeHtml(takenTime)} 服用済</span>` : ''}
+          const ingLabels =
+            med.type === 'supp' && Array.isArray(med.ingredients) && med.ingredients.length
+              ? med.ingredients
+                  .map((id) => INGREDIENT_TAGS.find((t) => t.id === id)?.label)
+                  .filter(Boolean)
+                  .join(' / ')
+              : '';
+
+          return `
+            <div class="card">
+              <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:12px; flex-wrap:wrap;">
+                <div style="flex:1; min-width:220px;">
+                  <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:6px;">
+                    ${typeBadge}
+                    <span class="badge badge-freq">${escapeHtml(getFrequencyBadgeLabel(med))}</span>
+                    ${isLow ? `<span class="badge badge-low">⚠️ 残りわずか（基準：${med.lowStockThreshold}回分以下）</span>` : ''}
+                  </div>
+                  <h3 style="font-size:1.05rem; font-weight:800; margin-bottom:4px;">
+                    ${escapeHtml(med.name)} <span style="font-size:0.86rem; color:var(--text-secondary);">（1回 ${escapeHtml(med.dosage)}）</span>
+                  </h3>
+                  <p style="font-size:0.84rem; color:var(--text-secondary);">
+                    <strong>飲むタイミング：</strong>${escapeHtml(timingLabels || '未設定')}
+                  </p>
+                  ${ingLabels ? `<p style="font-size:0.8rem; color:var(--purple); margin-top:3px;"><strong>栄養カテゴリ：</strong>${escapeHtml(ingLabels)}</p>` : ''}
+                  ${med.memo ? `<p style="font-size:0.8rem; color:var(--text-muted); margin-top:3px;"><strong>メモ：</strong>${escapeHtml(med.memo)}</p>` : ''}
+                </div>
+
+                <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end; gap:8px;">
+                  <div style="font-size:0.9rem; font-weight:800; color:${isLow ? 'var(--danger)' : 'var(--text-main)'};">
+                    残薬数：<span style="font-size:1.25rem;">${med.stock}</span> 回分
+                  </div>
+                  <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content:flex-end;">
+                    <button type="button" class="btn btn-secondary btn-sm" onclick="openRefillModal('${med.id}')">＋ 補充</button>
+                    <button type="button" class="btn btn-outline btn-sm" onclick="openMedModal('${med.id}')">編集</button>
+                    <button type="button" class="btn btn-danger-outline btn-sm" onclick="deleteMedication('${med.id}')">削除</button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="med-name">${escapeHtml(med.name)}</div>
-            ${med.dose ? `<div class="med-meta">用量・メモ：${escapeHtml(med.dose)}</div>` : ''}
-          </div>
-          <div class="med-actions">
-            <button type="button" class="btn ${isTaken ? 'btn-outline' : 'btn-primary'} btn-sm" onclick="toggleIntake('${med.id}')">
-              ${isTaken ? '記録を取り消す' : '✓ 飲んだ！'}
-            </button>
-            <button type="button" class="btn btn-ghost btn-sm" aria-label="削除" onclick="deleteMedication('${med.id}')">削除</button>
-          </div>
-        `;
-        container.appendChild(item);
+          `;
+        })
+        .join('');
+    }
+
+    function openMedModal(medId = null) {
+      document.getElementById('med-form').reset();
+      document.getElementById('med-id').value = medId || '';
+      showAllIngredientsOverride = false;
+
+      if (medId) {
+        const med = appState.medications.find((m) => m.id === medId);
+        if (!med) return;
+        document.getElementById('med-modal-title').textContent = 'お薬・サプリの編集';
+        document.getElementById('med-name').value = med.name;
+        document.getElementById('med-dosage').value = med.dosage;
+        document.getElementById('med-stock').value = med.stock;
+        document.getElementById('med-threshold').value = med.lowStockThreshold;
+        document.getElementById('med-memo').value = med.memo || '';
+
+        modalMedType = med.type;
+        modalFreqType = med.frequencyType || 'daily';
+        modalStartDate = med.startDate || getTodayStr();
+        modalIntervalDays = med.intervalDays || 2;
+        modalWeekdays = Array.isArray(med.weekdays) && med.weekdays.length ? [...med.weekdays] : [1, 3, 5];
+        modalSelectedIngredients = med.type === 'supp' ? [...(med.ingredients || [])] : [];
+        modalSelectedTimings = [...(med.timings || [])];
+      } else {
+        document.getElementById('med-modal-title').textContent = 'お薬・サプリの登録';
+        modalMedType = 'rx';
+        modalFreqType = 'daily';
+        modalStartDate = getTodayStr();
+        modalIntervalDays = 2;
+        modalWeekdays = [1, 3, 5];
+        modalSelectedIngredients = [];
+        modalSelectedTimings = [];
+      }
+
+      updateMedTypeUI();
+      updateFreqTypeUI();
+      renderIngredientSelector();
+      renderTimingSelector();
+      updateNomidokiSuggestion();
+      openModal('med-modal');
+    }
+
+    function selectMedType(type) {
+      modalMedType = type;
+      if (type !== 'supp') {
+        modalSelectedIngredients = [];
+        showAllIngredientsOverride = false;
+      }
+      updateMedTypeUI();
+      renderIngredientSelector();
+      updateNomidokiSuggestion();
+    }
+
+    function updateMedTypeUI() {
+      document.querySelectorAll('[data-med-type]').forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-med-type') === modalMedType);
+      });
+      const isSupp = modalMedType === 'supp';
+      document.getElementById('rx-otc-notice-box').classList.toggle('hidden', isSupp);
+      document.getElementById('supp-ingredient-section').classList.toggle('hidden', !isSupp);
+    }
+
+    function handleMedNameInput(val) {
+      if (modalMedType !== 'supp') return;
+      showAllIngredientsOverride = false;
+      renderIngredientSelector(val);
+      updateNomidokiSuggestion();
+    }
+
+    function showAllIngredientTags() {
+      showAllIngredientsOverride = true;
+      renderIngredientSelector(document.getElementById('med-name')?.value || '');
+    }
+
+    function getMatchedIngredientTags(rawQuery) {
+      const q = (rawQuery || '').trim().toLowerCase().replace(/\s+/g, '');
+      if (!q) return [];
+      return INGREDIENT_TAGS.filter((tag) => {
+        if (tag.label.toLowerCase().includes(q)) return true;
+        return (tag.keywords || []).some((kw) => {
+          const normKw = kw.toLowerCase().replace(/\s+/g, '');
+          return q.includes(normKw) || (q.length >= 2 && normKw.includes(q));
+        });
       });
     }
 
-    document.addEventListener('DOMContentLoaded', () => {
-      loadState();
-      renderApp();
-    });
+    function renderIngredientSelector(nameInputOverride = null) {
+      const container = document.getElementById('ingredient-tag-selector');
+      const statusEl = document.getElementById('ingredient-filter-status');
+      const showAllWrap = document.getElementById('ingredient-show-all-wrap');
+      if (!container) return;
+
+      const nameVal = nameInputOverride !== null
+        ? nameInputOverride
+        : (document.getElementById('med-name')?.value || '');
+
+      const matched = getMatchedIngredientTags(nameVal);
+      let displayTags = INGREDIENT_TAGS;
+      let isFiltered = false;
+
+      if (!showAllIngredientsOverride && nameVal.trim().length > 0 && matched.length > 0) {
+        const matchedIds = new Set(matched.map((t) => t.id));
+        modalSelectedIngredients.forEach((id) => matchedIds.add(id));
+        displayTags = INGREDIENT_TAGS.filter((t) => matchedIds.has(t.id));
+        isFiltered = displayTags.length < INGREDIENT_TAGS.length;
+      }
+
+      if (statusEl) {
+        if (isFiltered) {
+          statusEl.textContent = `🔍 名称に一致する候補：${displayTags.length}件を表示中`;
+        } else if (nameVal.trim().length > 0 && matched.length === 0) {
+          statusEl.textContent = `全${INGREDIENT_TAGS.length}カテゴリから選択`;
+        } else {
+          statusEl.textContent = `全${INGREDIENT_TAGS.length}カテゴリ`;
+        }
+      }
+
+      if (showAllWrap) {
+        showAllWrap.classList.toggle('hidden', !isFiltered);
+      }
+
+      container.innerHTML = displayTags.map((tag) => {
+        const isSelected = modalSelectedIngredients.includes(tag.id);
+        const isAutoMatched = matched.some((m) => m.id === tag.id);
+        return `
+          <button type="button" class="select-chip ${isSelected ? 'active' : ''}" onclick="toggleIngredientTag('${tag.id}')">
+            <span>${isSelected ? '✓' : (isAutoMatched && nameVal.trim() ? '✨' : '+')}</span>
+            <span>${escapeHtml(tag.label)}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleIngredientTag(tagId) {
+      if (modalSelectedIngredients.includes(tagId)) {
+        modalSelectedIngredients = modalSelectedIngredients.filter((id) => id !== tagId);
+      } else {
+        modalSelectedIngredients.push(tagId);
+      }
+      renderIngredientSelector();
+      updateNomidokiSuggestion();
+    }
+
+    function updateNomidokiSuggestion() {
+      const box = document.getElementById('nomidoki-suggestion-box');
+      if (!box) return;
+
+      if (modalMedType !== 'supp') {
+        box.classList.add('hidden');
+        return;
+      }
+
+      let targetTags = INGREDIENT_TAGS.filter((t) => modalSelectedIngredients.includes(t.id));
+      let isAutoPreview = false;
+
+      if (targetTags.length === 0) {
+        const nameVal = document.getElementById('med-name')?.value || '';
+        const matched = getMatchedIngredientTags(nameVal);
+        if (matched.length > 0) {
+          targetTags = matched.slice(0, 2);
+          isAutoPreview = true;
+        }
+      }
+
+      if (targetTags.length === 0) {
+        box.classList.add('hidden');
+        return;
+      }
+
+      const recSlotIds = Array.from(new Set(targetTags.flatMap((t) => t.recommendedSlots)));
+      const recLabels = recSlotIds
+        .map((id) => TIMING_SLOTS.find((s) => s.id === id)?.label)
+        .filter(Boolean)
+        .join('・');
+
+      const headerBadge = isAutoPreview
+        ? `✨ 入力された名称から自動判定されたおすすめ服用タイミング（サプリ参考）：<strong>${escapeHtml(recLabels)}</strong>`
+        : `💡 選択した栄養成分のおすすめ服用タイミング（サプリ参考）：<strong>${escapeHtml(recLabels)}</strong>`;
+
+      box.innerHTML = `
+        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:10px; flex-wrap:wrap; margin-bottom:8px;">
+          <div style="font-size:0.86rem;">
+            ${headerBadge}
+          </div>
+          <button type="button" class="btn btn-primary btn-sm" style="min-height:34px; font-size:0.78rem;" onclick="applyRecommendedTimings()">
+            おすすめタイミングを反映する
+          </button>
+        </div>
+        ${targetTags.map((t) => `
+          <div style="margin-bottom:5px; line-height:1.55;">
+            ・<strong>${escapeHtml(t.label)}</strong>：${escapeHtml(t.advice)}
+          </div>
+        `).join('')}
+      `;
+      box.classList.remove('hidden');
+    }
+
+    function applyRecommendedTimings() {
+      if (modalMedType !== 'supp') return;
+      let targetTags = INGREDIENT_TAGS.filter((t) => modalSelectedIngredients.includes(t.id));
+      if (targetTags.length === 0) {
+        const nameVal = document.getElementById('med-name')?.value || '';
+        const matched = getMatchedIngredientTags(nameVal);
+        if (matched.length > 0) {
+          targetTags = matched.slice(0, 2);
+          targetTags.forEach((t) => {
+            if (!modalSelectedIngredients.includes(t.id)) {
+              modalSelectedIngredients.push(t.id);
+            }
+          });
+          renderIngredientSelector();
+        }
+      }
+      if (targetTags.length === 0) return;
+
+      const recSlotIds = Array.from(new Set(targetTags.flatMap((t) => t.recommendedSlots)));
+      modalSelectedTimings = [...recSlotIds];
+      renderTimingSelector();
+      updateNomidokiSuggestion();
+      showToast('おすすめの服用タイミングを反映しました', 'success');
+    }
+
+    function selectFreqType(freq) {
+      modalFreqType = freq;
+      updateFreqTypeUI();
+    }
+
+    function updateFreqTypeUI() {
+      document.querySelectorAll('[data-freq-type]').forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-freq-type') === modalFreqType);
+      });
+      const intervalBox = document.getElementById('freq-interval-options');
+      const customDaysWrap = document.getElementById('freq-custom-days-wrap');
+      const weekdaysBox = document.getElementById('freq-weekdays-options');
+
+      intervalBox.classList.toggle('hidden', modalFreqType !== 'every_other' && modalFreqType !== 'custom_days');
+      customDaysWrap.classList.toggle('hidden', modalFreqType !== 'custom_days');
+      weekdaysBox.classList.toggle('hidden', modalFreqType !== 'weekdays');
+
+      document.getElementById('med-start-date').value = modalStartDate;
+      document.getElementById('med-interval-days').value = modalIntervalDays;
+
+      const wdContainer = document.getElementById('weekday-selector');
+      wdContainer.innerHTML = WEEKDAY_LABELS.map((label, idx) => {
+        const active = modalWeekdays.includes(idx);
+        return `<button type="button" class="select-chip ${active ? 'active' : ''}" onclick="toggleWeekday(${idx})">${label}</button>`;
+      }).join('');
+    }
+
+    function toggleWeekday(dayIdx) {
+      if (modalWeekdays.includes(dayIdx)) {
+        modalWeekdays = modalWeekdays.filter((d) => d !== dayIdx);
+      } else {
+        modalWeekdays.push(dayIdx);
+      }
+      updateFreqTypeUI();
+    }
+
+    function renderTimingSelector() {
+      const container = document.getElementById('timing-slot-selector');
+      if (!container) return;
+      container.innerHTML = TIMING_SLOTS.map((slot) => {
+        const active = modalSelectedTimings.includes(slot.id);
+        return `
+          <button type="button" class="select-chip ${active ? 'active' : ''}" onclick="toggleTimingSlot('${slot.id}')">
+            <span>${active ? '✓' : '+'}</span>
+            <span>${escapeHtml(slot.label)}</span>
+          </button>
+        `;
+      }).join('');
+    }
+
+    function toggleTimingSlot(slotId) {
+      if (modalSelectedTimings.includes(slotId)) {
+        modalSelectedTimings = modalSelectedTimings.filter((id) => id !== slotId);
+      } else {
+        modalSelectedTimings.push(slotId);
+      }
+      renderTimingSelector();
+    }
+
+    async function saveMedication(event) {
+      event.preventDefault();
+      const id = document.getElementById('med-id').value;
+      const name = document.getElementById('med-name').value.trim();
+      const dosage = document.getElementById('med-dosage').value.trim();
+      const stock = Math.max(0, Number(document.getElementById('med-stock').value) || 0);
+      const lowStockThreshold = Math.max(0, Number(document.getElementById('med-threshold').value) || 0);
+      const memo = document.getElementById('med-memo').value.trim();
+
+      if (modalSelectedTimings.length === 0) {
+        showToast('飲むタイミングを1つ以上選択してください', 'warning');
+        return;
+      }
+      if (modalFreqType === 'weekdays' && modalWeekdays.length === 0) {
+        showToast('飲む曜日を1つ以上選択してください', 'warning');
+        return;
+      }
+
+      const medObj = {
+        id: id || 'med_' + Date.now(),
+        type: modalMedType,
+        name,
+        dosage,
+        stock,
+        lowStockThreshold,
+        memo,
+        frequencyType: modalFreqType,
+        startDate: document.getElementById('med-start-date').value || getTodayStr(),
+        intervalDays: Math.max(2, Number(document.getElementById('med-interval-days').value) || 2),
+        weekdays: [...modalWeekdays].sort((a, b) => a - b),
+        timings: [...modalSelectedTimings],
+        ingredients: modalMedType === 'supp' ? [...modalSelectedIngredients] : []
+      };
+
+      if (id) {
+        const idx = appState.medications.findIndex((m) => m.id === id);
+        if (idx !== -1) appState.medications[idx] = medObj;
+        showToast(`「${name}」を更新しました`, 'success');
+      } else {
+        appState.medications.push(medObj);
+        showToast(`「${name}」を登録しました`, 'success');
+      }
+
+      closeModal('med-modal');
+      await persistAppState();
+      renderAllAppViews();
+    }
+
+    function deleteMedication(medId) {
+      const med = appState.medications.find((m) => m.id === medId);
+      if (!med) return;
+      openConfirmDialog(
+        'お薬・サプリの削除',
+        `「${med.name}」を一覧から削除しますか？`,
+        '削除する',
+        async () => {
+          appState.medications = appState.medications.filter((m) => m.id !== medId);
+          await persistAppState();
+          renderAllAppViews();
+          showToast('削除しました');
+        }
+      );
+    }
+
+    function openRefillModal(medId) {
+      const med = appState.medications.find((m) => m.id === medId);
+      if (!med) return;
+      currentRefillMedId = medId;
+      document.getElementById('refill-med-info').textContent = `${med.name}（現在の残数：${med.stock}回分）`;
+      openModal('refill-modal');
+    }
+
+    async function addRefillAmount(amount) {
+      const med = appState.medications.find((m) => m.id === currentRefillMedId);
+      if (!med) return;
+      med.stock = Number(med.stock || 0) + Number(amount);
+      closeModal('refill-modal');
+      await persistAppState();
+      renderAllAppViews();
+      showToast(`「${med.name}」に${amount}回分を補充しました`, 'success');
+    }
+
+    function submitCustomRefill() {
+      const val = Math.max(1, Number(document.getElementById('refill-custom-input').value) || 0);
+      addRefillAmount(val);
+    }
+
+    /**
+     * ==========================================================================
+     * 3. 「服薬履歴カレンダー」タブ＆さかのぼり記録
+     * ==========================================================================
+     */
+    function setCalendarFilter(val) {
+      calendarFilter = val;
+      renderCalendarView();
+    }
+
+    function changeCalendarMonth(delta) {
+      calendarMonthDate = new Date(calendarMonthDate.getFullYear(), calendarMonthDate.getMonth() + delta, 1);
+      renderCalendarView();
+    }
+
+    function jumpToCalendarToday() {
+      const today = getTodayStr();
+      calendarMonthDate = parseDateStr(today);
+      selectedCalendarDate = today;
+      renderCalendarView();
+    }
+
+    function selectCalendarDay(dateStr) {
+      selectedCalendarDate = dateStr;
+      renderCalendarView();
+    }
+
+    function getFilteredCalendarMeds() {
+      if (calendarFilter === 'all') return appState.medications;
+      if (calendarFilter === 'interval_only') {
+        return appState.medications.filter((m) => (m.frequencyType || 'daily') !== 'daily');
+      }
+      return appState.medications.filter((m) => m.id === calendarFilter);
+    }
+
+    function renderCalendarView() {
+      const filterSelect = document.getElementById('calendar-med-filter');
+      if (filterSelect) {
+        const currentVal = calendarFilter;
+        filterSelect.innerHTML = `
+          <option value="all">すべてのお薬・サプリ</option>
+          <option value="interval_only">隔日・週1・間隔指定のみ</option>
+          ${appState.medications.map((m) => `<option value="${escapeHtml(m.id)}">${escapeHtml(m.name)}</option>`).join('')}
+        `;
+        filterSelect.value = currentVal;
+      }
+
+      const year = calendarMonthDate.getFullYear();
+      const month = calendarMonthDate.getMonth();
+      document.getElementById('calendar-month-label').textContent = `${year}年${month + 1}月`;
+
+      const firstDay = new Date(year, month, 1).getDay();
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      const todayStr = getTodayStr();
+      const targetMeds = getFilteredCalendarMeds();
+
+      let cellsHtml = WEEKDAY_LABELS.map((w) => `<div class="calendar-weekday">${w}</div>`).join('');
+
+      for (let i = 0; i < firstDay; i++) {
+        cellsHtml += `<div class="calendar-day empty"></div>`;
+      }
+
+      for (let d = 1; d <= daysInMonth; d++) {
+        const dateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+        const dayLogs = appState.logs[dateStr] || {};
+        const scheduledMeds = targetMeds.filter((m) => isMedicationScheduledForDate(m, dateStr));
+
+        let plannedCount = 0;
+        let doneCount = 0;
+        scheduledMeds.forEach((m) => {
+          (m.timings || []).forEach((sId) => {
+            if (sId !== 'asneeded') plannedCount++;
+            if (dayLogs[`${m.id}_${sId}`]?.taken) doneCount++;
+          });
+        });
+
+        let pillHtml = '';
+        if (doneCount > 0 && plannedCount > 0 && doneCount >= plannedCount) {
+          pillHtml = `<span class="cal-pill cal-pill-done">完了${doneCount}/${plannedCount}</span>`;
+        } else if (doneCount > 0) {
+          pillHtml = `<span class="cal-pill cal-pill-partial">${doneCount}/${plannedCount || doneCount}</span>`;
+        } else if (plannedCount > 0 && dateStr >= todayStr) {
+          pillHtml = `<span class="cal-pill cal-pill-plan">予定${plannedCount}</span>`;
+        }
+
+        const isToday = dateStr === todayStr;
+        const isSelected = dateStr === selectedCalendarDate;
+
+        cellsHtml += `
+          <button type="button" class="calendar-day ${isToday ? 'is-today' : ''} ${isSelected ? 'is-selected' : ''}" onclick="selectCalendarDay('${dateStr}')">
+            <span>${d}</span>
+            ${pillHtml}
+          </button>
+        `;
+      }
+
+      document.getElementById('calendar-grid-container').innerHTML = cellsHtml;
+      renderCalendarDayDetail();
+    }
+
+    function renderCalendarDayDetail() {
+      const card = document.getElementById('calendar-day-detail-card');
+      if (!card) return;
+
+      const dateStr = selectedCalendarDate;
+      const dayLogs = appState.logs[dateStr] || {};
+      const targetMeds = getFilteredCalendarMeds();
+      const scheduledMeds = targetMeds.filter((m) => isMedicationScheduledForDate(m, dateStr));
+
+      // タイムライン（その日に飲んだ記録を時間順に抽出）
+      const timelineEntries = [];
+      Object.entries(dayLogs).forEach(([key, entry]) => {
+        if (!entry || !entry.taken) return;
+        const sepIdx = key.indexOf('_');
+        const medId = key.slice(0, sepIdx);
+        const slotId = key.slice(sepIdx + 1);
+        const med = appState.medications.find((m) => m.id === medId);
+        const slot = TIMING_SLOTS.find((s) => s.id === slotId);
+        if (!med) return;
+        timelineEntries.push({
+          medId,
+          slotId,
+          medName: med.name,
+          dosage: med.dosage,
+          slotLabel: slot ? slot.label : slotId,
+          time: entry.time,
+          sortMinutes: entry.sortMinutes || 0,
+          isRetroactive: Boolean(entry.isRetroactive)
+        });
+      });
+
+      timelineEntries.sort((a, b) => a.sortMinutes - b.sortMinutes);
+
+      const timelineHtml =
+        timelineEntries.length > 0
+          ? `
+            <div style="margin-bottom:20px;">
+              <h4 style="font-size:0.9rem; font-weight:800; color:var(--primary-dark); margin-bottom:10px;">
+                🕒 服薬タイムライン（${timelineEntries.length}件記録済み）
+              </h4>
+              <div class="timeline-list">
+                ${timelineEntries
+                  .map(
+                    (item) => `
+                    <div class="timeline-entry">
+                      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap;">
+                        <div>
+                          <span style="font-weight:800; color:var(--primary-hover); margin-right:8px;">${escapeHtml(item.time)}</span>
+                          <span class="badge badge-freq">${escapeHtml(item.slotLabel)}</span>
+                          ${item.isRetroactive ? `<span class="badge badge-retro" style="margin-left:4px;">📝 後から追加記録</span>` : ''}
+                          <div style="font-weight:800; font-size:0.92rem; margin-top:4px;">
+                            ${escapeHtml(item.medName)}（${escapeHtml(item.dosage)}）
+                          </div>
+                        </div>
+                        <button type="button" style="font-size:0.75rem; color:var(--text-muted); text-decoration:underline;" onclick="undoMedicationTake('${dateStr}', '${item.medId}', '${item.slotId}')">
+                          実は飲んでなかった（取消）
+                        </button>
+                      </div>
+                    </div>
+                  `
+                  )
+                  .join('')}
+              </div>
+            </div>
+          `
+          : `<p style="font-size:0.84rem; color:var(--text-muted); margin-bottom:16px;">この日の服薬完了記録はまだありません。</p>`;
+
+      // スケジュール一覧（未記録分はさかのぼり追加可能）
+      const scheduleRows = [];
+      scheduledMeds.forEach((med) => {
+        (med.timings || []).forEach((slotId) => {
+          const slot = TIMING_SLOTS.find((s) => s.id === slotId);
+          const entry = dayLogs[`${med.id}_${slotId}`];
+          const isTaken = Boolean(entry?.taken);
+          scheduleRows.push(`
+            <div class="slot-item ${isTaken ? 'is-taken' : ''}">
+              <div>
+                <span class="badge badge-freq">${escapeHtml(slot ? slot.label : slotId)}</span>
+                <strong style="margin-left:6px; font-size:0.92rem;">${escapeHtml(med.name)}</strong>
+                <span style="font-size:0.8rem; color:var(--text-secondary);">（${escapeHtml(med.dosage)}）</span>
+              </div>
+              <div>
+                ${
+                  isTaken
+                    ? `<span style="font-size:0.8rem; font-weight:800; color:var(--success);">✓ 記録済み（${escapeHtml(entry.time)}）</span>`
+                    : `<button type="button" class="btn btn-secondary btn-sm" onclick="openRetroactiveLogModal('${dateStr}', '${med.id}', '${slotId}')">＋ 飲んだ記録を追加</button>`
+                }
+              </div>
+            </div>
+          `);
+        });
+      });
+
+      card.innerHTML = `
+        <h3 class="card-title" style="margin-bottom:12px;">📅 ${formatJapaneseDate(dateStr)} の記録詳細</h3>
+        ${timelineHtml}
+        <div>
+          <h4 style="font-size:0.9rem; font-weight:800; color:var(--text-main); margin-bottom:8px;">
+            📋 この日のスケジュール一覧（記録忘れの追加対応）
+          </h4>
+          ${scheduleRows.length ? scheduleRows.join('') : `<p style="font-size:0.84rem; color:var(--text-muted);">この日に予定されているお薬・サプリはありません。</p>`}
+        </div>
+      `;
+    }
+
+    function openRetroactiveLogModal(dateStr, medId, slotId) {
+      const med = appState.medications.find((m) => m.id === medId);
+      const slot = TIMING_SLOTS.find((s) => s.id === slotId);
+      if (!med) return;
+
+      currentRetroTarget = { dateStr, medId, slotId };
+      document.getElementById('retro-log-target-info').textContent =
+        `${formatJapaneseDate(dateStr)} ／ ${slot ? slot.label : ''} ／ ${med.name}（${med.dosage}）`;
+      document.getElementById('retro-after-midnight-check').checked = false;
+      openModal('retro-log-modal');
+    }
+
+    async function submitRetroactiveLog() {
+      if (!currentRetroTarget) return;
+      const { dateStr, medId, slotId } = currentRetroTarget;
+      const med = appState.medications.find((m) => m.id === medId);
+      if (!med) return;
+
+      const timeVal = document.getElementById('retro-time-input').value || '08:00';
+      const isAfterMidnight = document.getElementById('retro-after-midnight-check').checked;
+      const timeInfo = buildRetroTimeInfo(timeVal, isAfterMidnight);
+
+      if (!appState.logs[dateStr]) appState.logs[dateStr] = {};
+      appState.logs[dateStr][`${medId}_${slotId}`] = {
+        taken: true,
+        time: timeInfo.displayTime,
+        sortMinutes: timeInfo.sortMinutes,
+        isRetroactive: true
+      };
+
+      if (Number(med.stock) > 0) {
+        med.stock = Number(med.stock) - 1;
+      }
+
+      closeModal('retro-log-modal');
+      await persistAppState();
+      renderAllAppViews();
+      showToast(`「${med.name}」の記録をさかのぼって追加しました`, 'success');
+    }
+
+    /**
+     * ==========================================================================
+     * 4. 「設定・規約」タブ（ニックネーム変更・JSONバックアップ・アカウント完全削除）
+     * ==========================================================================
+     */
+    function renderProfileSettingsView() {
+      const body = document.getElementById('profile-settings-body');
+      if (!body || !currentUser) return;
+
+      if (currentUser.isGuest) {
+        body.innerHTML = `
+          <p style="font-size:0.86rem; color:var(--text-secondary); margin-bottom:12px;">
+            現在<strong>ゲストモード（サンプル体験中）</strong>でご利用中です。無料会員登録（メールアドレス認証）を行うと、現在のサンプル・編集データを引き継いだままクラウドに安全に保存できます。
+          </p>
+          <div style="display:flex; gap:10px; flex-wrap:wrap;">
+            <button type="button" class="btn btn-primary btn-sm" onclick="openAuthModal('signup')">無料会員登録してデータを引き継ぐ</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="resetGuestSampleData()">サンプルデータを初期状態に戻す</button>
+          </div>
+        `;
+        return;
+      }
+
+      const verifyBadge =
+        currentUser.emailVerified || currentUser.isLocalFallback
+          ? `<span class="badge" style="background:var(--success-bg); color:var(--success); border:1px solid var(--success-border); margin-left:6px;">✓ メール認証済み</span>`
+          : `<span class="badge" style="background:var(--warning-bg); color:var(--warning); border:1px solid var(--warning-border); margin-left:6px;">未認証</span>`;
+
+      body.innerHTML = `
+        <p style="font-size:0.84rem; color:var(--text-secondary); margin-bottom:12px;">
+          登録メールアドレス：<strong>${escapeHtml(currentUser.email)}</strong> ${verifyBadge}
+        </p>
+        <div class="form-group" style="max-width:420px; margin-bottom:0;">
+          <label class="form-label" for="settings-nickname-input">ニックネーム（表示名）</label>
+          <div style="display:flex; gap:8px;">
+            <input type="text" id="settings-nickname-input" class="form-input" value="${escapeHtml(appState.nickname)}" maxlength="20" />
+            <button type="button" class="btn btn-primary" onclick="saveNicknameSetting()">変更を保存</button>
+          </div>
+        </div>
+      `;
+    }
+
+    async function saveNicknameSetting() {
+      const val = (document.getElementById('settings-nickname-input')?.value || '').trim();
+      if (!val) {
+        showToast('ニックネームを入力してください', 'warning');
+        return;
+      }
+      appState.nickname = val;
+      if (firebaseAuth && firebaseAuth.currentUser) {
+        try {
+          await updateProfile(firebaseAuth.currentUser, { displayName: val });
+        } catch (e) {}
+      }
+      await persistAppState();
+      renderHeaderAndView();
+      renderTodayView();
+      showToast('ニックネームを更新しました', 'success');
+    }
+
+    function exportBackupJson() {
+      const blob = new Blob([JSON.stringify(appState, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `nomidoki_backup_${getTodayStr()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+      showToast('バックアップファイルを書き出しました', 'success');
+    }
+
+    function importBackupJson(event) {
+      const file = event.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!parsed || !Array.isArray(parsed.medications)) {
+            throw new Error('Invalid format');
+          }
+          appState = {
+            nickname: parsed.nickname || appState.nickname,
+            medications: parsed.medications,
+            logs: parsed.logs && typeof parsed.logs === 'object' ? parsed.logs : {}
+          };
+          await persistAppState();
+          renderAllAppViews();
+          showToast('バックアップからデータを復元しました', 'success');
+        } catch (err) {
+          showToast('JSONファイルの読み込みに失敗しました', 'warning');
+        }
+      };
+      reader.readAsText(file);
+    }
+
+    function confirmDeleteAccount() {
+      openConfirmDialog(
+        'アカウントと全データの完全削除',
+        '本当にアカウントとすべての服薬データを完全に削除しますか？この操作は元に戻せません。',
+        '完全に削除する',
+        async () => {
+          if (!currentUser) return;
+          if (currentUser.isLocalFallback) {
+            const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.LOCAL_USERS) || '{}');
+            delete users[currentUser.email];
+            localStorage.setItem(STORAGE_KEYS.LOCAL_USERS, JSON.stringify(users));
+            localStorage.removeItem(STORAGE_KEYS.LOCAL_SESSION);
+            currentUser = null;
+            renderHeaderAndView();
+            showToast('アカウントとデータを完全に削除しました');
+            return;
+          }
+          try {
+            if (firebaseDb) {
+              await deleteDoc(doc(firebaseDb, 'users', currentUser.uid));
+            }
+            if (firebaseAuth && firebaseAuth.currentUser) {
+              await deleteUser(firebaseAuth.currentUser);
+            }
+            currentUser = null;
+            renderHeaderAndView();
+            showToast('アカウントとクラウドデータを完全に削除しました');
+          } catch (err) {
+            showToast('セキュリティ保護のため、一度ログアウトして再ログイン後に再度お試しください', 'warning');
+          }
+        }
+      );
+    }
+
+    /**
+     * 初期化処理
+     */
+    function initApp() {
+      applySiteInfoAndAds();
+      renderColumnShowcase('lp-column-showcase');
+      renderColumnShowcase('app-column-showcase');
+
+      // グローバル関数公開
+      window.handleBrandClick = handleBrandClick;
+      window.openAuthModal = openAuthModal;
+      window.openGuestConfirmModal = openGuestConfirmModal;
+      window.startGuestMode = startGuestMode;
+      window.resetGuestSampleData = resetGuestSampleData;
+      window.setAuthMode = setAuthMode;
+      window.submitAuthForm = submitAuthForm;
+      window.sendPasswordResetFromModal = sendPasswordResetFromModal;
+      window.checkEmailVerificationStatus = checkEmailVerificationStatus;
+      window.resendVerificationEmail = resendVerificationEmail;
+      window.togglePasswordVisibility = togglePasswordVisibility;
+      window.updatePasswordRulesIndicator = updatePasswordRulesIndicator;
+      window.handleLogout = handleLogout;
+      window.switchTab = switchTab;
+      window.setTodayFilter = setTodayFilter;
+      window.setMedsFilter = setMedsFilter;
+      window.openMedModal = openMedModal;
+      window.selectMedType = selectMedType;
+      window.handleMedNameInput = handleMedNameInput;
+      window.showAllIngredientTags = showAllIngredientTags;
+      window.toggleIngredientTag = toggleIngredientTag;
+      window.applyRecommendedTimings = applyRecommendedTimings;
+      window.selectFreqType = selectFreqType;
+      window.toggleWeekday = toggleWeekday;
+      window.toggleTimingSlot = toggleTimingSlot;
+      window.saveMedication = saveMedication;
+      window.deleteMedication = deleteMedication;
+      window.openRefillModal = openRefillModal;
+      window.addRefillAmount = addRefillAmount;
+      window.submitCustomRefill = submitCustomRefill;
+      window.recordMedicationTake = recordMedicationTake;
+      window.undoMedicationTake = undoMedicationTake;
+      window.setCalendarFilter = setCalendarFilter;
+      window.changeCalendarMonth = changeCalendarMonth;
+      window.jumpToCalendarToday = jumpToCalendarToday;
+      window.selectCalendarDay = selectCalendarDay;
+      window.openRetroactiveLogModal = openRetroactiveLogModal;
+      window.submitRetroactiveLog = submitRetroactiveLog;
+      window.saveNicknameSetting = saveNicknameSetting;
+      window.exportBackupJson = exportBackupJson;
+      window.importBackupJson = importBackupJson;
+      window.confirmDeleteAccount = confirmDeleteAccount;
+      window.handleContactSubmit = handleContactSubmit;
+      window.copyContactText = copyContactText;
+      window.closeModal = closeModal;
+
+      if (firebaseAuth) {
+        onAuthStateChanged(firebaseAuth, async (user) => {
+          if (user) {
+            const data = await loadCloudData(user.uid, user.displayName || user.email.split('@')[0]);
+            enterAppSession(
+              { uid: user.uid, email: user.email, displayName: data.nickname, emailVerified: user.emailVerified, isLocalFallback: false },
+              data
+            );
+          } else {
+            currentUser = null;
+            renderHeaderAndView();
+          }
+        });
+      } else {
+        const savedEmail = localStorage.getItem(STORAGE_KEYS.LOCAL_SESSION);
+        const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.LOCAL_USERS) || '{}');
+        if (savedEmail && users[savedEmail]) {
+          const found = users[savedEmail];
+          enterAppSession(
+            { uid: found.uid, email: savedEmail, displayName: found.data.nickname, emailVerified: true, isLocalFallback: true },
+            found.data
+          );
+        } else {
+          renderHeaderAndView();
+        }
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initApp);
+    } else {
+      initApp();
+    }
   </script>
 </body>
 </html>
