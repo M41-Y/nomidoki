@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex" />
+  <title>アカウント認証・お手続き完了｜ノミドキ（Nomidoki）</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #0d9488;
+      --primary-hover: #0f766e;
+      --primary-dark: #115e59;
+      --primary-light: #f0fdfa;
+      --primary-border: #99f6e4;
+      --page-bg: #f4f9f8;
+      --surface: #ffffff;
+      --surface-muted: #f8fafc;
+      --text-main: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --border-soft: #e2e8f0;
+      --success: #047857;
+      --success-bg: #ecfdf5;
+      --success-border: #a7f3d0;
+      --danger: #be123c;
+      --danger-bg: #fff1f2;
+      --danger-border: #fecdd3;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-xl: 22px;
+      --shadow-md: 0 12px 28px rgba(13, 148, 136, 0.12);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Yu Gothic", sans-serif;
+      background-color: var(--page-bg);
+      color: var(--text-main);
+      line-height: 1.75;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    button, input {
+      font-family: inherit;
+      font-size: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .site-header {
+      background-color: #ffffff;
+      border-bottom: 1px solid var(--border-soft);
+      padding: 14px 16px;
+    }
+
+    .header-inner {
+      max-width: 680px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 11px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .brand-title {
+      font-size: 1.15rem;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .brand-sub {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--primary-hover);
+    }
+
+    .main-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 16px;
+    }
+
+    .auth-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-md);
+      width: 100%;
+      max-width: 500px;
+      padding: clamp(24px, 4vw, 34px);
+    }
+
+    .status-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.7rem;
+      margin-bottom: 16px;
+    }
+
+    .status-success {
+      background-color: var(--success-bg);
+      border: 1.5px solid var(--success-border);
+      color: var(--success);
+    }
+
+    .status-info {
+      background-color: var(--primary-light);
+      border: 1.5px solid var(--primary-border);
+      color: var(--primary-hover);
+    }
+
+    .status-error {
+      background-color: var(--danger-bg);
+      border: 1.5px solid var(--danger-border);
+      color: var(--danger);
+    }
+
+    h1 {
+      font-size: 1.32rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+      line-height: 1.4;
+    }
+
+    p {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      margin-bottom: 16px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 800;
+      margin-bottom: 6px;
+    }
+
+    .form-input {
+      width: 100%;
+      min-height: 46px;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+    }
+
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.16);
+    }
+
+    .pw-rules-box {
+      margin-top: 8px;
+      padding: 10px 12px;
+      background-color: var(--surface-muted);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .pw-rule-item {
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+
+    .pw-rule-item.valid {
+      color: var(--success);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 48px;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      font-weight: 800;
+      font-size: 0.94rem;
+      text-decoration: none;
+      transition: background-color 0.15s ease;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 3px 10px rgba(13, 148, 136, 0.25);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .site-footer {
+      text-align: center;
+      padding: 18px 16px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <polyline points="12 7 12 12 15 14"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">ノミドキ</div>
+          <div class="brand-sub">NOMIDOKI ACCOUNT VERIFICATION</div>
+        </div>
+      </a>
+    </div>
+  </header>
+
+  <main class="main-wrap">
+    <div class="auth-card">
+      <!-- 1. 読み込み中 -->
+      <div id="state-loading">
+        <div class="status-icon status-info">⏳</div>
+        <h1>認証情報を確認しています...</h1>
+        <p>そのまま少々お待ちください。</p>
+      </div>
+
+      <!-- 2. メールアドレス認証完了 -->
+      <div id="state-verified" class="hidden">
+        <div class="status-icon status-success">✓</div>
+        <h1>メールアドレスの確認が完了しました！</h1>
+        <p>
+          ご登録ありがとうございます。アカウントの本登録が完了しました。<br />
+          下のボタンから「ノミドキ」のアプリ画面へお進みください。
+        </p>
+        <a href="index.html" class="btn btn-primary">ノミドキのアプリを開く →</a>
+      </div>
+
+      <!-- 3. パスワード再設定フォーム -->
+      <div id="state-reset-form" class="hidden">
+        <div class="status-icon status-info">🔑</div>
+        <h1>新しいパスワードの設定</h1>
+        <p id="reset-target-email-text">新しいパスワードを入力して設定を完了してください。</p>
+        <form onsubmit="submitNewPassword(event)">
+          <div class="form-group">
+            <label class="form-label" for="new-password-input">新しいパスワード</label>
+            <input type="password" id="new-password-input" class="form-input" placeholder="半角英字と半角数字を含む6文字以上" oninput="checkNewPwRules(this.value)" required />
+            <div class="pw-rules-box">
+              <div class="pw-rule-item" id="rule-len">○ 6文字以上で入力</div>
+              <div class="pw-rule-item" id="rule-mix">○ 半角英字と半角数字の2種類を組み合わせる（全角・スペース不可）</div>
+            </div>
+          </div>
+          <p id="reset-inline-error" class="hidden" style="color:var(--danger); font-weight:700; font-size:0.84rem;"></p>
+          <button type="submit" class="btn btn-primary">新しいパスワードを保存する</button>
+        </form>
+      </div>
+
+      <!-- 4. パスワード再設定完了 -->
+      <div id="state-reset-done" class="hidden">
+        <div class="status-icon status-success">✓</div>
+        <h1>パスワードの再設定が完了しました</h1>
+        <p>
+          新しいパスワードが保存されました。トップページから新しいパスワードでログインしてください。
+        </p>
+        <a href="index.html" class="btn btn-primary">トップページへ戻ってログインする →</a>
+      </div>
+
+      <!-- 5. エラー・有効期限切れ -->
+      <div id="state-error" class="hidden">
+        <div class="status-icon status-error">!</div>
+        <h1>リンクの有効期限が切れているか、無効です</h1>
+        <p id="error-detail-text">
+          認証リンクは一度使用されたか、有効期限が切れています。アプリ画面へ戻り、再度確認メールまたは再設定メールを送信してください。
+        </p>
+        <a href="index.html" class="btn btn-primary">ノミドキのトップページへ戻る</a>
+      </div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    © 2026 ノミドキ（Nomidoki） All rights reserved.
+  </footer>
+
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+    import {
+      getAuth,
+      applyActionCode,
+      verifyPasswordResetCode,
+      confirmPasswordReset
+    } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+
+    /**
+     * ※ index.html と同じご自身の Firebase 設定値に差し替えてご利用ください
+     */
+    const FIREBASE_CONFIG = {
+      apiKey: "AIzaSyDemoNomidokiPublicWebKey000000000",
+      authDomain: "nomidoki-app.firebaseapp.com",
+      projectId: "nomidoki-app",
+      storageBucket: "nomidoki-app.appspot.com",
+      messagingSenderId: "123456789012",
+      appId: "1:123456789012:web:abcdef1234567890"
+    };
+
+    const app = initializeApp(FIREBASE_CONFIG);
+    const auth = getAuth(app);
+
+    const params = new URLSearchParams(window.location.search);
+    const mode = params.get('mode');
+    const oobCode = params.get('oobCode');
+
+    function showSection(id) {
+      ['state-loading', 'state-verified', 'state-reset-form', 'state-reset-done', 'state-error'].forEach((s) => {
+        document.getElementById(s).classList.toggle('hidden', s !== id);
+      });
+    }
+
+    function validatePassword(pw) {
+      const hasMinLen = pw.length >= 6;
+      const hasAlpha = /[A-Za-z]/.test(pw);
+      const hasDigit = /[0-9]/.test(pw);
+      const isAsciiOnly = /^[!-~]+$/.test(pw);
+      return {
+        hasMinLen,
+        hasMix: hasAlpha && hasDigit && isAsciiOnly,
+        isValid: hasMinLen && hasAlpha && hasDigit && isAsciiOnly
+      };
+    }
+
+    window.checkNewPwRules = function (val) {
+      const res = validatePassword(val || '');
+      const lenEl = document.getElementById('rule-len');
+      const mixEl = document.getElementById('rule-mix');
+      lenEl.classList.toggle('valid', res.hasMinLen);
+      lenEl.textContent = `${res.hasMinLen ? '✓' : '○'} 6文字以上で入力`;
+      mixEl.classList.toggle('valid', res.hasMix);
+      mixEl.textContent = `${res.hasMix ? '✓' : '○'} 半角英字と半角数字の2種類を組み合わせる（全角・スペース不可）`;
+    };
+
+    window.submitNewPassword = async function (event) {
+      event.preventDefault();
+      const newPw = document.getElementById('new-password-input').value;
+      const errEl = document.getElementById('reset-inline-error');
+      const check = validatePassword(newPw);
+
+      if (!check.isValid) {
+        errEl.textContent = '半角英字と半角数字を組み合わせた6文字以上で入力してください。';
+        errEl.classList.remove('hidden');
+        return;
+      }
+
+      errEl.classList.add('hidden');
+      try {
+        await confirmPasswordReset(auth, oobCode, newPw);
+        showSection('state-reset-done');
+      } catch (err) {
+        showSection('state-error');
+      }
+    };
+
+    async function handleAction() {
+      if (!mode || !oobCode) {
+        showSection('state-error');
+        return;
+      }
+
+      try {
+        if (mode === 'verifyEmail') {
+          await applyActionCode(auth, oobCode);
+          showSection('state-verified');
+        } else if (mode === 'resetPassword') {
+          const email = await verifyPasswordResetCode(auth, oobCode);
+          document.getElementById('reset-target-email-text').textContent =
+            `${email} の新しいパスワードを設定してください。`;
+          showSection('state-reset-form');
+        } else {
+          showSection('state-error');
+        }
+      } catch (err) {
+        showSection('state-error');
+      }
+    }
+
+    handleAction();
+  </script>
+</body>
+</html>
