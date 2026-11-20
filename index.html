@@ -3123,7 +3123,32 @@
       currentUser = null;
       renderHeaderAndView();
       showToast(currentUser?.isGuest ? 'お試し体験を終了しました' : 'ログアウトしました');
+      
     }
+
+    async function handleAuthSubmit(e) {
+      if (e) e.preventDefault();
+      const email = document.getElementById('auth-email')?.value.trim() || '';
+      const password = document.getElementById('auth-password')?.value || '';
+      const nickInput = document.getElementById('auth-nickname')?.value.trim() || '';
+      const defaultNick = nickInput || (email.includes('@') ? email.split('@')[0] : 'ゲスト');
+
+      if (!email || !password) {
+        showToast('メールアドレスとパスワードを入力してください', 'warning');
+        return;
+      }
+
+      if (firebaseAuth) {
+        try {
+          if (authMode === 'signup') {
+            const cred = await createUserWithEmailAndPassword(firebaseAuth, email, password);
+            if (cred.user && defaultNick) {
+              await updateProfile(cred.user, { displayName: defaultNick });
+            }
+            if (cred.user) {
+              await sendEmailVerification(cred.user);
+            }
+
             appState = { nickname: defaultNick, medications: [], logs: {} };
             await saveCloudData(cred.user.uid);
             showToast('会員登録完了！確認メールを送信しました', 'success');
@@ -3133,7 +3158,7 @@
           }
           closeModal('auth-modal');
           return;
-        } catch (err) {
+        }catch (err) {
           const code = err?.code || '';
           if (code === 'auth/email-already-in-use') {
             showToast('このメールアドレスは既に登録されています', 'warning');
@@ -3144,7 +3169,7 @@
           }
           return;
         }
-      }
+      
 
       // ローカルフォールバック環境（プレビュー / file: 等）
       const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.LOCAL_USERS) || '{}');
@@ -3171,7 +3196,7 @@
         closeModal('auth-modal');
         showToast('ログインしました', 'success');
       }
-    }
+    
 
     /**
      * ログアウト・ブランドクリック
