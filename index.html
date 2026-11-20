@@ -2138,43 +2138,22 @@
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
     /**
-     * ==========================================================================
-     * 【運営者・公開情報設定（SITE_INFO）】
-     * 公開前に operatorName と contactEmail をご自身の情報に書き換えてください。
-     * ==========================================================================
-     */
-    const SITE_INFO = {
-      operatorName: 'ノミドキ（Nomidoki）',
-      contactEmail: 'support@example.com',
-      updatedDate: '2026年11月20日'
-    };
-
-    /**
-     * ==========================================================================
-     * 【広告配信設定（AD_CONFIG）】
-     * 審査通過後に provider を 'adsense' に変更し、clientId / slotId を設定すると本番広告へ切り替わります。
-     * ==========================================================================
-     */
-    const AD_CONFIG = {
-      provider: 'demo', // 'demo' | 'adsense'
-      adsenseClientId: 'ca-pub-XXXXXXXXXXXXXXXX',
-      adsenseSlotId: 'XXXXXXXXXX'
-    };
-
-    /**
-     * Firebase プロジェクト設定（ご自身のFirebase設定値に差し替え可能）
+     * Firebase プロジェクト設定（nomidoki-app-a1b35）
      */
     const FIREBASE_CONFIG = {
-      apiKey: "AIzaSyDemoNomidokiPublicWebKey000000000",
-      authDomain: "nomidoki-app.firebaseapp.com",
-      projectId: "nomidoki-app",
-      storageBucket: "nomidoki-app.appspot.com",
-      messagingSenderId: "123456789012",
-      appId: "1:123456789012:web:abcdef1234567890"
+      apiKey: "AIzaSyDd3IVlFYCBXrYpDSZ1psEMn5t-5IbePrg",
+      authDomain: "nomidoki-app-a1b35.firebaseapp.com",
+      projectId: "nomidoki-app-a1b35",
+      storageBucket: "nomidoki-app-a1b35.firebasestorage.app",
+      messagingSenderId: "620025677481",
+      appId: "1:620025677481:web:310e51b797bb9277cb4bb8"
     };
 
+    const isPlaceholderFirebaseConfig =
+      !FIREBASE_CONFIG.apiKey || FIREBASE_CONFIG.apiKey.includes('DemoNomidoki');
+
     /**
-     * 服用タイミングマスター（8時間帯）
+     * タイミング定義
      */
     const TIMING_SLOTS = [
       { id: 'wake_up', label: '起床時', timeHint: '起きてすぐ・朝食前' },
@@ -2638,7 +2617,7 @@
     let firebaseAuth = null;
     let firebaseDb = null;
 
-    if (canUseFirebaseCloud) {
+    if (canUseFirebaseCloud && !isPlaceholderFirebaseConfig) {
       try {
         const app = initializeApp(FIREBASE_CONFIG);
         firebaseAuth = getAuth(app);
@@ -3081,8 +3060,12 @@
             showToast('このメールアドレスは既に登録されています', 'warning');
           } else if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
             showToast('メールアドレスまたはパスワードが正しくありません', 'warning');
+          } else if (code === 'auth/unauthorized-domain') {
+            showToast('Firebaseの「承認済みドメイン」に現在のURLを追加してください', 'warning');
+          } else if (code === 'auth/api-key-not-valid' || code === 'auth/operation-not-allowed') {
+            showToast('FirebaseのAPIキー設定、またはメール/パスワード認証の有効化をご確認ください', 'warning');
           } else {
-            showToast('認証エラーが発生しました。入力内容をご確認ください', 'warning');
+            showToast(`認証エラー（${code || '通信エラー'}）が発生しました`, 'warning');
           }
           return;
         }
@@ -3182,13 +3165,14 @@
      * ログアウト・ブランドクリック
      */
     async function handleLogout() {
-      if (currentUser && firebaseAuth) {
+      const wasGuest = Boolean(currentUser && currentUser.isGuest);
+      if (currentUser && !currentUser.isGuest && firebaseAuth) {
         await signOut(firebaseAuth);
       }
       localStorage.removeItem(STORAGE_KEYS.LOCAL_SESSION);
       currentUser = null;
       renderHeaderAndView();
-      showToast('ログアウトしました');
+      showToast(wasGuest ? 'お試し体験を終了しました' : 'ログアウトしました');
     }
 
     function handleBrandClick(event) {
@@ -3301,6 +3285,205 @@
           <span class="user-pill">👤 ${escapeHtml(displayName)}さん</span>
           <button type="button" class="btn btn-outline btn-sm" onclick="handleLogout()">ログアウト</button>
         `;
+      }
+    }
+
+    /**
+     * ==========================================================================
+     * 1. タブ切替＆「今日の飲み時」ビュー描画
+     * ==========================================================================
+     */
+    function switchTab(tabId) {
+      currentTab = tabId;
+      ['today', 'meds', 'history', 'guide', 'settings'].forEach((id) => {
+        const sec = document.getElementById(`tab-${id}`);
+        if (sec) sec.classList.toggle('hidden', id !== tabId);
+      });
+      document.querySelectorAll('.app-tab-btn, .mobile-nav-item').forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-tab') === tabId);
+      });
+      renderAllAppViews();
+    }
+
+    function renderAllAppViews() {
+      renderTodayView();
+      renderMedsView();
+      renderCalendarView();
+      renderProfileSettingsView();
+    }
+
+    function setTodayFilter(filter) {
+      todayFilter = filter;
+      document.querySelectorAll('[data-today-filter]').forEach((btn) => {
+        btn.classList.toggle('active', btn.getAttribute('data-today-filter') === filter);
+      });
+      renderTodayView();
+    }
+
+    function getCurrentSlotHintId() {
+      const h = new Date().getHours();
+      if (h >= 4 && h < 7) return 'wake_up';
+      if (h >= 7 && h < 11) return 'after_breakfast';
+      if (h >= 11 && h < 15) return 'after_lunch';
+      if (h >= 15 && h < 21) return 'after_dinner';
+      return 'bedtime';
+    }
+
+    function renderTodayView() {
+      const todayStr = getTodayStr();
+      const dayLogs = appState.logs[todayStr] || {};
+      const displayName = appState.nickname || currentUser?.displayName || 'ユーザー';
+
+      const greetingEl = document.getElementById('today-greeting-title');
+      const subtitleEl = document.getElementById('today-date-subtitle');
+      if (greetingEl) greetingEl.textContent = `${displayName}さんの今日の飲み時`;
+      if (subtitleEl) subtitleEl.textContent = formatJapaneseDate(todayStr);
+
+      const scheduledToday = appState.medications.filter((m) => isMedicationScheduledForDate(m, todayStr));
+      const offDayMeds = appState.medications.filter((m) => !isMedicationScheduledForDate(m, todayStr));
+
+      let totalPlanned = 0;
+      let totalTaken = 0;
+      scheduledToday.forEach((m) => {
+        (m.timings || []).forEach((slotId) => {
+          if (slotId !== 'asneeded') totalPlanned++;
+          if (dayLogs[`${m.id}_${slotId}`]?.taken) totalTaken++;
+        });
+      });
+      const lowStockCount = appState.medications.filter((m) => Number(m.stock) <= Number(m.lowStockThreshold)).length;
+
+      const summaryGrid = document.getElementById('today-summary-grid');
+      if (summaryGrid) {
+        summaryGrid.innerHTML = `
+          <div class="summary-box">
+            <div class="summary-label">本日の服用完了</div>
+            <div class="summary-value" style="color:var(--primary-hover);">${totalTaken} <span style="font-size:0.9rem; color:var(--text-muted);">/ ${totalPlanned}回</span></div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-label">本日の対象アイテム</div>
+            <div class="summary-value">${scheduledToday.length} <span style="font-size:0.9rem; color:var(--text-muted);">種類</span></div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-label">本日お休み（隔日・週1等）</div>
+            <div class="summary-value">${offDayMeds.length} <span style="font-size:0.9rem; color:var(--text-muted);">種類</span></div>
+          </div>
+          <div class="summary-box">
+            <div class="summary-label">残りわずか（補充アラート）</div>
+            <div class="summary-value" style="color:${lowStockCount > 0 ? 'var(--danger)' : 'var(--text-main)'};">${lowStockCount} <span style="font-size:0.9rem; color:var(--text-muted);">種類</span></div>
+          </div>
+        `;
+      }
+
+      renderOverlapAlerts();
+
+      const slotsContainer = document.getElementById('today-slots-container');
+      const offdayContainer = document.getElementById('today-offday-container');
+      if (!slotsContainer) return;
+
+      const filteredScheduled = scheduledToday.filter((m) => todayFilter === 'all' || m.type === todayFilter);
+      const nextSlotId = getCurrentSlotHintId();
+
+      if (filteredScheduled.length === 0) {
+        slotsContainer.innerHTML = `
+          <div class="card" style="text-align:center; padding:30px 20px;">
+            <p style="font-weight:800; color:var(--text-secondary); margin-bottom:10px;">
+              本日予定されている該当のお薬・サプリメントはありません
+            </p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="openMedModal()">＋ お薬・サプリを登録する</button>
+          </div>
+        `;
+      } else {
+        const slotSectionsHtml = TIMING_SLOTS.map((slot) => {
+          const medsInSlot = filteredScheduled.filter((m) => (m.timings || []).includes(slot.id));
+          if (medsInSlot.length === 0) return '';
+
+          const isNext = slot.id === nextSlotId;
+          const itemsHtml = medsInSlot
+            .map((med) => {
+              const logKey = `${med.id}_${slot.id}`;
+              const entry = dayLogs[logKey];
+              const isTaken = Boolean(entry?.taken);
+              const isLow = Number(med.stock) <= Number(med.lowStockThreshold);
+
+              const typeBadge =
+                med.type === 'rx'
+                  ? '<span class="badge badge-rx">処方薬</span>'
+                  : med.type === 'otc'
+                  ? '<span class="badge badge-otc">市販薬</span>'
+                  : '<span class="badge badge-supp">サプリ</span>';
+
+              return `
+                <div class="slot-item ${isTaken ? 'is-taken' : ''}">
+                  <div style="flex:1; min-width:200px;">
+                    <div style="display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:4px;">
+                      ${typeBadge}
+                      <span class="badge badge-freq">${escapeHtml(getFrequencyBadgeLabel(med))}</span>
+                      ${isLow ? `<span class="badge badge-low">残${med.stock}回分</span>` : `<span style="font-size:0.75rem; color:var(--text-muted); font-weight:700;">残${med.stock}回分</span>`}
+                    </div>
+                    <div style="font-weight:800; font-size:0.96rem;">
+                      ${escapeHtml(med.name)} <span style="font-size:0.83rem; color:var(--text-secondary);">（1回 ${escapeHtml(med.dosage)}）</span>
+                    </div>
+                    ${med.memo ? `<div style="font-size:0.77rem; color:var(--text-muted); margin-top:2px;">📝 ${escapeHtml(med.memo)}</div>` : ''}
+                  </div>
+                  <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+                    ${
+                      isTaken
+                        ? `<span style="font-size:0.82rem; font-weight:800; color:var(--success);">✓ 完了（${escapeHtml(entry.time)}）</span>
+                           <button type="button" class="btn btn-outline btn-sm" onclick="undoMedicationTake('${todayStr}', '${med.id}', '${slot.id}')">取消</button>`
+                        : `<button type="button" class="btn btn-primary btn-sm" onclick="recordMedicationTake('${todayStr}', '${med.id}', '${slot.id}')">✓ 飲んだ！</button>`
+                    }
+                  </div>
+                </div>
+              `;
+            })
+            .join('');
+
+          return `
+            <div class="slot-section ${isNext ? 'is-next-slot' : ''}">
+              <div class="slot-header">
+                <div>
+                  <strong style="font-size:1rem; color:var(--text-main);">${escapeHtml(slot.label)}</strong>
+                  <span style="font-size:0.78rem; color:var(--text-muted); margin-left:6px;">${escapeHtml(slot.timeHint)}</span>
+                </div>
+                ${isNext ? `<span class="badge" style="background:var(--primary); color:#ffffff;">現在の時間帯目安</span>` : ''}
+              </div>
+              ${itemsHtml}
+            </div>
+          `;
+        }).join('');
+
+        slotsContainer.innerHTML = slotSectionsHtml;
+      }
+
+      if (offdayContainer) {
+        const filteredOffDay = offDayMeds.filter((m) => todayFilter === 'all' || m.type === todayFilter);
+        if (filteredOffDay.length === 0) {
+          offdayContainer.innerHTML = '';
+        } else {
+          offdayContainer.innerHTML = `
+            <div class="card" style="background-color:var(--surface-muted); margin-top:16px;">
+              <h3 class="card-title" style="font-size:0.95rem; margin-bottom:10px;">🌙 本日お休みのお薬・サプリ（隔日・曜日指定など）</h3>
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                ${filteredOffDay
+                  .map((med) => {
+                    const nextDate = getNextScheduledDate(med, todayStr);
+                    return `
+                      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px; flex-wrap:wrap; font-size:0.84rem; padding:8px 12px; background:#ffffff; border-radius:var(--radius-sm); border:1px solid var(--border-soft);">
+                        <div>
+                          <span class="badge badge-freq">${escapeHtml(getFrequencyBadgeLabel(med))}</span>
+                          <strong style="margin-left:6px;">${escapeHtml(med.name)}</strong>
+                        </div>
+                        <span style="font-size:0.78rem; color:var(--primary-hover); font-weight:700;">
+                          次回予定：${nextDate ? formatJapaneseDate(nextDate) : '未定'}
+                        </span>
+                      </div>
+                    `;
+                  })
+                  .join('')}
+              </div>
+            </div>
+          `;
+        }
       }
     }
 
