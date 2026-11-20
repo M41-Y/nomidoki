@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="お薬の「食前・食後・食間・起床時・寝る前」の正しいタイミングや、飲み忘れを防ぐ工夫、お薬手帳の活用法をわかりやすく解説するノミドキ公式コラム集です。" />
+  <title>飲み時解説コラム｜ノミドキ（Nomidoki）</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #0d9488;
+      --primary-hover: #0f766e;
+      --primary-dark: #115e59;
+      --primary-light: #f0fdfa;
+      --primary-subtle: #ccfbf1;
+      --primary-border: #99f6e4;
+
+      --page-bg: #f4f9f8;
+      --surface: #ffffff;
+      --surface-muted: #f8fafc;
+
+      --text-main: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --border-soft: #e2e8f0;
+
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      --warning-text: #78350f;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+      --radius-full: 9999px;
+
+      --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+      background-color: var(--page-bg);
+      color: var(--text-main);
+      line-height: 1.8;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    a {
+      color: var(--primary-hover);
+    }
+
+    .container {
+      width: 100%;
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 42px;
+      padding: 8px 16px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.88rem;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-sm {
+      min-height: 38px;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-outline {
+      background-color: var(--surface);
+      color: var(--text-main);
+      border: 1.5px solid var(--border-color);
+    }
+
+    .btn-ghost {
+      color: var(--text-secondary);
+    }
+
+    .site-header {
+      background-color: rgba(255, 255, 255, 0.98);
+      border-bottom: 1px solid var(--border-soft);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 68px;
+      padding: 8px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.18rem;
+      font-weight: 800;
+      line-height: 1.15;
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary-hover);
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb-bar {
+      background-color: var(--surface);
+      border-bottom: 1px solid var(--border-soft);
+      padding: 10px 0;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .breadcrumb-list {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .breadcrumb-list a {
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .page-hero {
+      background: radial-gradient(circle at top right, #ccfbf1 0%, #f0fdfa 45%, #ffffff 100%);
+      padding: 36px 0 32px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .hero-eyebrow {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--primary-hover);
+      background-color: #ffffff;
+      border: 1px solid var(--primary-border);
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 10px;
+    }
+
+    .page-hero h1 {
+      font-size: clamp(1.45rem, 3.6vw, 2.05rem);
+      font-weight: 800;
+      line-height: 1.35;
+      margin-bottom: 10px;
+    }
+
+    .page-hero p {
+      font-size: 0.94rem;
+      color: var(--text-secondary);
+      max-width: 740px;
+    }
+
+    .content-section {
+      padding: 28px 0 44px;
+    }
+
+    .toc-box {
+      background-color: var(--surface);
+      border: 1.5px solid var(--primary-border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      margin-bottom: 24px;
+    }
+
+    .toc-box h2 {
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .toc-box ul {
+      margin-left: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.88rem;
+    }
+
+    .article-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-xl);
+      padding: clamp(20px, 3.5vw, 30px);
+      margin-bottom: 22px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .article-tag {
+      display: inline-block;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      background-color: var(--primary-light);
+      border: 1px solid var(--primary-border);
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      margin-bottom: 8px;
+    }
+
+    .article-card h2 {
+      font-size: 1.24rem;
+      font-weight: 800;
+      line-height: 1.4;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .article-card h3 {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin: 16px 0 6px;
+    }
+
+    .article-card p {
+      font-size: 0.92rem;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+    }
+
+    .timing-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 14px 0;
+      font-size: 0.88rem;
+    }
+
+    .timing-table th, .timing-table td {
+      padding: 11px 14px;
+      border: 1px solid var(--border-soft);
+      text-align: left;
+    }
+
+    .timing-table th {
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+      font-weight: 800;
+      width: 24%;
+    }
+
+    .alert-warning {
+      background-color: var(--warning-bg);
+      border: 1.5px solid var(--warning-border);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      color: var(--warning-text);
+      font-size: 0.86rem;
+      margin-top: 16px;
+    }
+
+    .site-footer {
+      background-color: var(--primary-dark);
+      color: #ccfbf1;
+      padding: 32px 0 44px;
+      font-size: 0.82rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .footer-links a {
+      color: #ffffff;
+      font-weight: 700;
+      text-decoration: underline;
+      font-size: 0.84rem;
+    }
+
+    .footer-links a:hover {
+      color: #99f6e4;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 共通ヘッダー -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <polyline points="12 7 12 12 15 14"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">ノミドキ</div>
+          <div class="brand-sub">NOMIDOKI KNOWLEDGE COLUMNS</div>
+        </div>
+      </a>
+
+      <div class="header-actions">
+        <a href="faq.html" class="btn btn-ghost btn-sm">使い方・Q&amp;A</a>
+        <a href="contact.html" class="btn btn-ghost btn-sm">お問い合わせ</a>
+        <a href="index.html" class="btn btn-outline btn-sm">← アプリ・トップへ戻る</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- パンくずリスト -->
+  <nav class="breadcrumb-bar" aria-label="パンくずリスト">
+    <div class="container">
+      <div class="breadcrumb-list">
+        <a href="index.html">トップページ</a>
+        <span>›</span>
+        <span>飲み時解説コラム</span>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="page-hero">
+      <div class="container">
+        <span class="hero-eyebrow">MEDICATION TIMING COLUMNS</span>
+        <h1>お薬の「飲み時」解説コラム</h1>
+        <p>
+          処方箋や市販薬のパッケージに書かれている「食前」「食後」「食間」などの意味や、毎日の飲み忘れ・二重飲みを防ぐ実践的な習慣づくりのヒントをまとめました。
+        </p>
+      </div>
+    </section>
+
+    <section class="container content-section">
+      <!-- 目次 -->
+      <div class="toc-box">
+        <h2>📑 このページのコラム一覧</h2>
+        <ul>
+          <li><a href="#col-1">第1回：「食前・食後・食間・起床時・寝る前」の正しい時間の目安</a></li>
+          <li><a href="#col-2">第2回：なぜ飲み忘れや二重飲みは起きる？行動とセットにする習慣化のコツ</a></li>
+          <li><a href="#col-3">第3回：受診・薬局で役立つ「服用記録メモ」とお薬手帳の上手な併用術</a></li>
+        </ul>
+      </div>
+
+      <!-- コラム1 -->
+      <article id="col-1" class="article-card">
+        <span class="article-tag">基礎知識｜服用タイミング</span>
+        <h2>第1回：「食前・食後・食間・起床時・寝る前」の正しい時間の目安</h2>
+        <p>
+          お薬は、成分がもっとも適切に吸収され、かつ胃腸などへの負担を抑えられるように「飲むタイミング（飲み時）」が細かく決められています。それぞれの一般的な時間の目安を確認しておきましょう。
+        </p>
+
+        <table class="timing-table">
+          <tbody>
+            <tr>
+              <th>食前</th>
+              <td>食事を始める <strong>約30分前</strong> の目安です。胃の中に食べ物がない状態で吸収を高めたいお薬や、食後の血糖値上昇を抑えるお薬、吐き気止めなどで指示されます。</td>
+            </tr>
+            <tr>
+              <th>食後</th>
+              <td>食事を終えてから <strong>約30分以内</strong> の目安です。胃の中に食べ物があることで胃粘膜への刺激を和らげたり、食べ物の成分と一緒に吸収されやすくなるお薬でよく使われます。</td>
+            </tr>
+            <tr>
+              <th>食間</th>
+              <td>「食事の最中」ではなく、<strong>食事と次の食事の間（食後約2時間後）</strong> の空腹時を指します。漢方薬や胃粘膜を保護するお薬などで指定されることが多いタイミングです。</td>
+            </tr>
+            <tr>
+              <th>起床時</th>
+              <td>朝起きてすぐ、朝食をとる前の空腹時にコップ1杯の水で服用します。骨粗しょう症のお薬など、服用後しばらく横にならない指示がつくものもあります。</td>
+            </tr>
+            <tr>
+              <th>寝る前</th>
+              <td>就寝する <strong>約30分前</strong> の目安です。睡眠をサポートするお薬や、翌朝のお通じを促すお薬、アレルギー症状を抑えるお薬などで指示されます。</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div class="alert-warning">
+          <strong>⚠️ ご注意：</strong>上記は一般的な時間の目安です。お薬の種類によっては「食事の直前（いただきますの直前）」や「食直後」など厳密な指定がある場合もございますので、必ず薬袋（やくたい）や薬剤情報提供書の記載をご確認ください。
+        </div>
+      </article>
+
+      <!-- コラム2 -->
+      <article id="col-2" class="article-card">
+        <span class="article-tag">習慣化｜飲み忘れ防止</span>
+        <h2>第2回：なぜ飲み忘れや二重飲みは起きる？行動とセットにする習慣化のコツ</h2>
+        <p>
+          毎日同じ時間に飲んでいるつもりでも、「忙しい朝に飲んだかどうか記憶が曖昧になる」「休日は起きる時間がずれて飲み忘れる」というのは誰にでも起こり得ることです。
+        </p>
+
+        <h3>1. 「既存のルーティン」とセットにする（イフゼンプランニング）</h3>
+        <p>
+          「8時に飲む」と時間だけで決めるよりも、「朝食の食器を片付けたら飲む」「歯みがきの前にコップの水を用意する」といった、毎日必ず行う行動の直前・直後に紐づけると忘れにくくなります。
+        </p>
+
+        <h3>2. 「飲んだ直後のワンタップ記録」で記憶の曖昧さをなくす</h3>
+        <p>
+          飲み忘れと同じくらい注意したいのが、飲んだことを忘れてもう一度飲んでしまう「二重飲み（重複服用）」です。お薬を口に入れたらその場で<strong>ノミドキの「✓ 飲んだ！」ボタン</strong>を押す習慣をつけることで、「今日何時何分に飲んだか」を客観的に確認でき、ご家族との情報共有にも役立ちます。
+        </p>
+      </article>
+
+      <!-- コラム3 -->
+      <article id="col-3" class="article-card" style="margin-bottom:0;">
+        <span class="article-tag">受診サポート｜記録活用</span>
+        <h2>第3回：受診・薬局で役立つ「服用記録メモ」とお薬手帳の上手な併用術</h2>
+        <p>
+          病院の診察室や調剤薬局では、「最近お薬はきちんと飲めていますか？」「飲み忘れる時間帯はありますか？」と尋ねられることがよくあります。
+        </p>
+        <p>
+          処方内容を記録する<strong>「お薬手帳」</strong>と、実際の服用状況や体調メモを残す<strong>「ノミドキの履歴機能」</strong>を併用することで、医師や薬剤師へ正確な生活リズムを伝えることができます。もし飲み忘れが多い時間帯がある場合は、遠慮なく相談することで「1日3回から1日2回のお薬への変更」や「一包化（いっぽうか）」などの提案を受けられることもあります。
+        </p>
+        <div style="margin-top:16px;">
+          <a href="index.html#app-workspace" class="btn btn-primary btn-sm">ノミドキで今日の服薬を記録してみる →</a>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- 共通フッター -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="index.html">トップページ（ノミドキ）</a>
+        <a href="columns.html">飲み時解説コラム</a>
+        <a href="faq.html">使い方ガイド・Q&amp;A</a>
+        <a href="contact.html">お問い合わせ</a>
+        <a href="index.html#lp-disclaimer">医療免責事項</a>
+        <a href="index.html#privacy-policy-doc">プライバシーポリシー</a>
+        <a href="index.html#terms-doc">利用規約</a>
+      </div>
+      <p style="margin-bottom:6px;">
+        運営：<span>個人開発（@Yoduru_M41）</span> ／ お問い合わせ：<span>nomidoki.support@gmail.com</span> ／ ver.1.0
+      </p>
+      <p>© 2026 ノミドキ（Nomidoki） All rights reserved. 本サービスは医療行為・診断・処方を提供するものではありません。</p>
+    </div>
+  </footer>
+</body>
+</html>

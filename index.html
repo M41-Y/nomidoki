@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ノミドキ（Nomidoki）は、毎日のお薬の飲み時と服用履歴をかんたん・シンプルに記録・確認できる無料Webアプリです。登録不要・スマホ対応。" />
+  <title>ノミドキ（Nomidoki）｜毎日のお薬の飲み時・服用記録Webアプリ</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&display=swap" rel="stylesheet" />
+
+  <style>
+    :root {
+      --primary: #0d9488;
+      --primary-hover: #0f766e;
+      --primary-dark: #115e59;
+      --primary-light: #f0fdfa;
+      --primary-subtle: #ccfbf1;
+      --primary-border: #99f6e4;
+
+      --page-bg: #f4f9f8;
+      --surface: #ffffff;
+      --surface-muted: #f8fafc;
+
+      --text-main: #0f172a;
+      --text-secondary: #334155;
+      --text-muted: #64748b;
+      --border-color: #cbd5e1;
+      --border-soft: #e2e8f0;
+
+      --success: #059669;
+      --success-bg: #ecfdf5;
+      --success-border: #a7f3d0;
+
+      --warning: #b45309;
+      --warning-bg: #fffbeb;
+      --warning-border: #fde68a;
+      --warning-text: #78350f;
+
+      --danger: #be123c;
+      --danger-bg: #fff1f2;
+      --danger-border: #fecdd3;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 22px;
+      --radius-full: 9999px;
+
+      --shadow-xs: 0 1px 2px rgba(15, 23, 42, 0.05);
+      --shadow-sm: 0 3px 10px rgba(13, 148, 136, 0.07);
+      --shadow-md: 0 10px 24px rgba(13, 148, 136, 0.11);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      font-size: 16px;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "Noto Sans JP", -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Hiragino Sans", "Yu Gothic", "Meiryo", sans-serif;
+      background-color: var(--page-bg);
+      color: var(--text-main);
+      line-height: 1.75;
+      overflow-x: hidden;
+      min-height: 100vh;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    button, input, select, textarea {
+      font-family: inherit;
+      font-size: inherit;
+      color: inherit;
+    }
+
+    button {
+      cursor: pointer;
+      border: none;
+      background: none;
+    }
+
+    a {
+      color: var(--primary-hover);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 0 16px;
+    }
+
+    /* ボタン共通 */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 7px;
+      min-height: 44px;
+      padding: 10px 18px;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.9rem;
+      line-height: 1.3;
+      transition: background-color 0.15s ease, transform 0.1s ease, border-color 0.15s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-sm {
+      min-height: 38px;
+      padding: 7px 14px;
+      font-size: 0.82rem;
+      border-radius: var(--radius-sm);
+    }
+
+    .btn-block {
+      width: 100%;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 3px 10px rgba(13, 148, 136, 0.28);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background-color: var(--surface);
+      color: var(--primary-hover);
+      border: 2px solid var(--primary-border);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--primary-light);
+      border-color: var(--primary);
+    }
+
+    .btn-outline {
+      background-color: var(--surface);
+      color: var(--text-main);
+      border: 1.5px solid var(--border-color);
+    }
+
+    .btn-outline:hover {
+      background-color: var(--surface-muted);
+      border-color: #94a3b8;
+    }
+
+    .btn-ghost {
+      background-color: transparent;
+      color: var(--text-secondary);
+    }
+
+    .btn-ghost:hover {
+      background-color: var(--primary-light);
+      color: var(--primary-hover);
+    }
+
+    .btn-danger-outline {
+      background-color: var(--surface);
+      color: var(--danger);
+      border: 1.5px solid var(--danger-border);
+    }
+
+    .btn-danger-outline:hover {
+      background-color: var(--danger-bg);
+    }
+
+    /* ヘッダー */
+    .site-header {
+      background-color: rgba(255, 255, 255, 0.98);
+      border-bottom: 1px solid var(--border-soft);
+      position: sticky;
+      top: 0;
+      z-index: 30;
+    }
+
+    .header-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 68px;
+      padding: 8px 0;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+      flex-shrink: 0;
+    }
+
+    .brand-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 3px 10px rgba(13, 148, 136, 0.3);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 1.18rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-main);
+      line-height: 1.15;
+    }
+
+    .brand-sub {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--primary-hover);
+    }
+
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    /* ヒーローセクション */
+    .hero-section {
+      background: radial-gradient(circle at top right, #ccfbf1 0%, #f0fdfa 45%, #ffffff 100%);
+      padding: 36px 0 32px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: var(--primary-hover);
+      background-color: #ffffff;
+      border: 1px solid var(--primary-border);
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-size: clamp(1.5rem, 3.8vw, 2.2rem);
+      font-weight: 800;
+      line-height: 1.35;
+      color: var(--text-main);
+      margin-bottom: 12px;
+    }
+
+    .hero-lead {
+      font-size: 0.96rem;
+      color: var(--text-secondary);
+      max-width: 720px;
+      margin-bottom: 20px;
+    }
+
+    .hero-cta-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* アプリ本体セクション */
+    .app-section {
+      padding: 28px 0 36px;
+    }
+
+    .app-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-xl);
+      padding: clamp(18px, 3.2vw, 26px);
+      margin-bottom: 20px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .date-header-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+      padding-bottom: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .logical-date-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .logical-note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .progress-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: var(--primary-light);
+      border: 1.5px solid var(--primary-border);
+      color: var(--primary-dark);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.85rem;
+      font-weight: 800;
+    }
+
+    /* タイミングタブ */
+    .timing-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+      margin-bottom: 18px;
+    }
+
+    .timing-tab {
+      padding: 8px 14px;
+      border-radius: var(--radius-full);
+      border: 1.5px solid var(--border-soft);
+      background-color: var(--surface-muted);
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .timing-tab.active {
+      background-color: var(--primary);
+      border-color: var(--primary);
+      color: #ffffff;
+    }
+
+    /* お薬カードリスト */
+    .med-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .med-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 16px;
+      border-radius: var(--radius-lg);
+      border: 1.5px solid var(--border-soft);
+      background-color: var(--surface);
+      transition: border-color 0.15s ease, background-color 0.15s ease;
+    }
+
+    .med-item.taken {
+      background-color: var(--success-bg);
+      border-color: var(--success-border);
+    }
+
+    .med-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .med-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 2px 10px;
+      border-radius: var(--radius-full);
+      font-size: 0.74rem;
+      font-weight: 800;
+    }
+
+    .badge-timing {
+      background-color: var(--primary-light);
+      color: var(--primary-dark);
+      border: 1px solid var(--primary-border);
+    }
+
+    .badge-cycle {
+      background-color: var(--surface-muted);
+      color: var(--text-secondary);
+      border: 1px solid var(--border-color);
+    }
+
+    .badge-taken {
+      background-color: var(--success);
+      color: #ffffff;
+    }
+
+    .med-name {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-main);
+      word-break: break-word;
+    }
+
+    .med-meta {
+      font-size: 0.82rem;
+      color: var(--text-secondary);
+      margin-top: 3px;
+    }
+
+    .med-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 36px 16px;
+      background-color: var(--surface-muted);
+      border: 1.5px dashed var(--border-color);
+      border-radius: var(--radius-lg);
+      color: var(--text-secondary);
+    }
+
+    /* フォーム要素 */
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 12px;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.84rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 5px;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      min-height: 44px;
+      padding: 9px 13px;
+      border: 1.5px solid var(--border-color);
+      border-radius: var(--radius-md);
+      background-color: #ffffff;
+      font-size: 0.92rem;
+    }
+
+    .form-input:focus, .form-select:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.16);
+    }
+
+    /* 記事・LP解説セクション */
+    .info-section {
+      padding: 12px 0 40px;
+    }
+
+    .section-heading {
+      font-size: 1.32rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 8px;
+    }
+
+    .section-sub {
+      font-size: 0.9rem;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .feature-card {
+      background-color: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      box-shadow: var(--shadow-xs);
+    }
+
+    .feature-card h3 {
+      font-size: 1.02rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin-bottom: 8px;
+    }
+
+    .feature-card p {
+      font-size: 0.87rem;
+      color: var(--text-secondary);
+    }
+
+    .doc-box {
+      background-color: var(--surface);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-xl);
+      padding: clamp(20px, 3.5vw, 28px);
+      margin-bottom: 20px;
+    }
+
+    .doc-box h2 {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-soft);
+    }
+
+    .doc-box p, .doc-box li {
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .doc-box ul {
+      margin-left: 20px;
+      margin-bottom: 10px;
+    }
+
+    .disclaimer-alert {
+      background-color: var(--warning-bg);
+      border: 1.5px solid var(--warning-border);
+      border-radius: var(--radius-lg);
+      padding: 18px 20px;
+      color: var(--warning-text);
+      margin-bottom: 20px;
+    }
+
+    .disclaimer-alert h2 {
+      font-size: 1.05rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+      color: var(--warning-text);
+    }
+
+    .disclaimer-alert p {
+      font-size: 0.87rem;
+      margin-bottom: 6px;
+    }
+
+    .policy-operator-block {
+      background-color: var(--surface-muted);
+      border: 1px solid var(--border-soft);
+      border-radius: var(--radius-md);
+      padding: 14px 16px;
+      margin-top: 12px;
+      font-size: 0.86rem;
+    }
+
+    /* トースト＆モーダル */
+    .toast {
+      position: fixed;
+      top: 78px;
+      right: 16px;
+      z-index: 60;
+      background-color: var(--primary-dark);
+      color: #ffffff;
+      border-left: 4px solid #34d399;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.86rem;
+      font-weight: 700;
+      box-shadow: var(--shadow-md);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      z-index: 50;
+    }
+
+    .modal-panel {
+      background-color: var(--surface);
+      border-radius: var(--radius-xl);
+      width: 100%;
+      max-width: 480px;
+      padding: 24px;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* フッター */
+    .site-footer {
+      background-color: var(--primary-dark);
+      color: #ccfbf1;
+      padding: 32px 0 44px;
+      font-size: 0.82rem;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 14px;
+    }
+
+    .footer-links a {
+      color: #ffffff;
+      font-weight: 700;
+      text-decoration: underline;
+      font-size: 0.84rem;
+    }
+
+    .footer-links a:hover {
+      color: #99f6e4;
+    }
+
+    @media (max-width: 640px) {
+      .med-item {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .med-actions {
+        justify-content: flex-end;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div id="toast-box" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <!-- 共通ヘッダー -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-icon" aria-hidden="true">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="9"></circle>
+            <polyline points="12 7 12 12 15 14"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div class="brand-title">ノミドキ</div>
+          <div class="brand-sub">NOMIDOKI MEDICATION TRACKER</div>
+        </div>
+      </a>
+
+      <nav class="header-nav" aria-label="メインナビゲーション">
+        <a href="#app-workspace" class="btn btn-ghost btn-sm">記録アプリ</a>
+        <a href="columns.html" class="btn btn-ghost btn-sm">飲み時コラム</a>
+        <a href="faq.html" class="btn btn-ghost btn-sm">使い方・Q&amp;A</a>
+        <a href="contact.html" class="btn btn-outline btn-sm">お問い合わせ</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- ヒーローセクション -->
+    <section class="hero-section">
+      <div class="container">
+        <span class="hero-badge">登録不要・無料・ブラウザですぐ使える服薬サポート</span>
+        <h1 class="hero-title">「あれ、今日のお薬飲んだっけ？」を<br />ワンタップで安心に変える。</h1>
+        <p class="hero-lead">
+          <strong>ノミドキ（Nomidoki）</strong>は、朝・昼・晩・寝る前などの「飲み時（服用タイミング）」ごとにお薬の服用状況をシンプルに記録できる無料Webアプリです。深夜4:00日付切替や隔日服用にも対応しています。
+        </p>
+        <div class="hero-cta-row">
+          <a href="#app-workspace" class="btn btn-primary">今すぐ今日の服薬を記録する</a>
+          <a href="columns.html" class="btn btn-secondary">「食前・食後・食間」の正しい飲み方を読む</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- アプリ本体セクション -->
+    <section id="app-workspace" class="app-section">
+      <div class="container">
+
+        <!-- 今日の服薬チェックボード -->
+        <div class="app-card">
+          <div class="date-header-bar">
+            <div>
+              <div class="logical-date-title">
+                <span id="logical-date-display">読み込み中...</span>
+                <span class="progress-pill" id="progress-pill">達成：0 / 0</span>
+              </div>
+              <div class="logical-note">※ 夜ふかしや寝る前の服用に配慮し、毎日 <strong>午前4:00</strong> に日付が切り替わります。</div>
+            </div>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-secondary btn-sm" onclick="toggleAddForm()">＋ お薬を追加登録</button>
+              <button type="button" class="btn btn-outline btn-sm" onclick="openHistoryModal()">📜 履歴を見る</button>
+            </div>
+          </div>
+
+          <!-- お薬新規登録フォーム（開閉式） -->
+          <div id="add-med-panel" class="hidden" style="background:var(--primary-light); border:1.5px solid var(--primary-border); border-radius:16px; padding:18px; margin-bottom:20px;">
+            <h2 style="font-size:1rem; font-weight:800; color:var(--primary-dark); margin-bottom:12px;">新しいお薬・サプリメントを登録</h2>
+            <form id="add-med-form" onsubmit="handleAddMedication(event)">
+              <div class="form-grid">
+                <div>
+                  <label class="form-label" for="med-name-input">お薬・サプリ名 <span style="color:var(--danger);">*</span></label>
+                  <input type="text" id="med-name-input" class="form-input" placeholder="例：朝のビタミン剤、血圧の薬" required />
+                </div>
+                <div>
+                  <label class="form-label" for="med-timing-select">飲み時（タイミング）</label>
+                  <select id="med-timing-select" class="form-select">
+                    <option value="起床時">起床時</option>
+                    <option value="朝食前">朝食前</option>
+                    <option value="朝食後" selected>朝食後</option>
+                    <option value="昼食前">昼食前</option>
+                    <option value="昼食後">昼食後</option>
+                    <option value="夕食前">夕食前</option>
+                    <option value="夕食後">夕食後</option>
+                    <option value="寝る前">寝る前</option>
+                    <option value="頓服・その他">頓服・その他</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label" for="med-cycle-select">服用サイクル</label>
+                  <select id="med-cycle-select" class="form-select">
+                    <option value="daily" selected>毎日</option>
+                    <option value="alternate">1日おき（隔日）</option>
+                    <option value="as_needed">必要なとき（頓服）</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="form-label" for="med-dose-input">1回の量・メモ（任意）</label>
+                  <input type="text" id="med-dose-input" class="form-input" placeholder="例：1錠、食後30分以内" />
+                </div>
+              </div>
+              <div style="display:flex; gap:8px; justify-content:flex-end; flex-wrap:wrap;">
+                <button type="button" class="btn btn-outline btn-sm" onclick="toggleAddForm()">キャンセル</button>
+                <button type="submit" class="btn btn-primary btn-sm">この内容で登録する</button>
+              </div>
+            </form>
+          </div>
+
+          <!-- タイミング絞り込みタブ -->
+          <div class="timing-tabs" role="tablist" aria-label="飲み時フィルター">
+            <button type="button" class="timing-tab active" data-filter="ALL" onclick="setTimingFilter('ALL', this)">すべて表示</button>
+            <button type="button" class="timing-tab" data-filter="朝" onclick="setTimingFilter('朝', this)">朝（起床・朝食）</button>
+            <button type="button" class="timing-tab" data-filter="昼" onclick="setTimingFilter('昼', this)">昼（昼食）</button>
+            <button type="button" class="timing-tab" data-filter="夕" onclick="setTimingFilter('夕', this)">夜（夕食）</button>
+            <button type="button" class="timing-tab" data-filter="寝る前" onclick="setTimingFilter('寝る前', this)">寝る前</button>
+            <button type="button" class="timing-tab" data-filter="頓服" onclick="setTimingFilter('頓服', this)">頓服・その他</button>
+          </div>
+
+          <!-- 今日のリスト -->
+          <div id="med-list-container" class="med-list"></div>
+
+          <!-- サンプル投入・データ管理バー -->
+          <div style="margin-top:20px; padding-top:14px; border-top:1px solid var(--border-soft); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+            <span style="font-size:0.78rem; color:var(--text-muted);">※ 記録データはお使いの端末（ブラウザ内）に自動保存されます。</span>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+              <button type="button" class="btn btn-ghost btn-sm" onclick="loadSampleMedications()">お試しサンプルを追加</button>
+              <button type="button" class="btn btn-danger-outline btn-sm" onclick="openResetConfirmModal()">全データ初期化</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- サービス解説・ガイドセクション -->
+    <section class="info-section">
+      <div class="container">
+        <h2 class="section-heading">ノミドキ（Nomidoki）の主な特徴と使い方</h2>
+        <p class="section-sub">毎日の服薬習慣を無理なく続けられるよう、シンプルさと実用性にこだわって設計しています。</p>
+
+        <div class="feature-grid">
+          <div class="feature-card">
+            <h3>1. ワンタップで服用時刻を記録</h3>
+            <p>「飲んだ！」ボタンを押すだけで、現在時刻とともに本日の服用完了が記録されます。飲み忘れや二重飲みの防止に役立ちます。</p>
+          </div>
+          <div class="feature-card">
+            <h3>2. 深夜4:00日付切替に対応</h3>
+            <p>0時を過ぎてから「寝る前のお薬」を飲む生活リズムでも、翌日分と混ざらないよう午前4時を1日の区切りとしています。</p>
+          </div>
+          <div class="feature-card">
+            <h3>3. 個人情報不要・端末内保存</h3>
+            <p>会員登録やメールアドレスの入力は一切不要です。記録したお薬情報はブラウザのローカルストレージに安全に保存されます。</p>
+          </div>
+        </div>
+
+        <!-- 医療免責事項 -->
+        <div id="lp-disclaimer" class="disclaimer-alert">
+          <h2>⚠️ 医療免責事項（必ずお読みください）</h2>
+          <p>
+            本サービス「ノミドキ（Nomidoki）」および掲載されているコラム・解説記事は、日々の服薬スケジュール管理や一般的な健康知識の整理を目的としたセルフケア補助ツールです。
+          </p>
+          <p>
+            <strong>本サービスは医療行為、医学的診断、治療、処方、または服薬指導を提供するものではありません。</strong>
+            お薬の服用方法・用量・飲み合わせ・飲み忘れた際の対処法については、必ず主治医または調剤薬局の薬剤師の指示に従ってください。
+          </p>
+        </div>
+
+        <!-- プライバシーポリシー -->
+        <div id="privacy-policy-doc" class="doc-box">
+          <h2>プライバシーポリシー</h2>
+          <p>
+            「ノミドキ（Nomidoki）」（以下「当サービス」）は、利用者のプライバシーを尊重し、個人情報の保護に努めます。
+          </p>
+          <ul>
+            <li><strong>端末内データの保存：</strong>当サービスに入力されたお薬名や服用履歴などのデータは、利用者ご自身のブラウザ（localStorage）内にのみ保存され、運営者のサーバーへ自動送信されることはありません。</li>
+            <li><strong>アクセス解析・広告配信について：</strong>当サービスでは、利便性向上や運営維持のためにアクセス解析ツールや第三者配信の広告サービス（Google AdSense等）を利用する場合があります。これらはCookieを使用して適切な広告を表示することがありますが、個人を特定する情報は含まれません。</li>
+            <li><strong>お問い合わせ時の情報：</strong>お問い合わせフォームまたはメールにてご連絡いただいた際のメールアドレス・お名前等は、お問い合わせへの回答および必要なご連絡のみに利用いたします。</li>
+          </ul>
+          <div class="policy-operator-block">
+            <p style="margin-bottom:0;">
+              <strong>運営者：</strong>個人開発（@Yoduru_M41）<br />
+              <strong>お問い合わせ窓口：</strong><a href="contact.html">お問い合わせフォーム</a> または
+              <a href="mailto:nomidoki.support@gmail.com">nomidoki.support@gmail.com</a>
+            </p>
+          </div>
+        </div>
+
+        <!-- 利用規約 -->
+        <div id="terms-doc" class="doc-box" style="margin-bottom:0;">
+          <h2>利用規約</h2>
+          <p>
+            本規約は、当サービスの利用に関する条件を定めるものです。利用者は本規約に同意のうえ、当サービスをご利用ください。
+          </p>
+          <ul>
+            <li>当サービスは現状有姿で提供されるものであり、特定の目的への適合性や完全性、端末の故障・ブラウザキャッシュ消去等によるデータ消失がないことを保証するものではありません。</li>
+            <li>当サービスの利用により生じた損害（飲み忘れ・重複服用・データ消失等を含む）について、運営者は一切の責任を負いかねます。</li>
+            <li>運営者は、予告なく本サービスの内容変更、バージョンアップ、または提供の停止を行うことがあります。</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- 履歴確認モーダル -->
+  <div id="history-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="history-modal-title">
+    <div class="modal-panel">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <h3 id="history-modal-title" style="font-size:1.1rem; font-weight:800;">📜 直近の服用履歴（過去7日間）</h3>
+        <button type="button" class="btn btn-ghost btn-sm" onclick="closeModal('history-modal')">✕ 閉じる</button>
+      </div>
+      <div id="history-list-body" style="max-height:360px; overflow-y:auto; display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+  </div>
+
+  <!-- 全データ初期化確認モーダル（alert/confirm不使用） -->
+  <div id="reset-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="reset-modal-title">
+    <div class="modal-panel">
+      <h3 id="reset-modal-title" style="font-size:1.1rem; font-weight:800; color:var(--danger); margin-bottom:10px;">⚠️ 全データの初期化確認</h3>
+      <p style="font-size:0.88rem; color:var(--text-secondary); margin-bottom:18px;">
+        登録されているお薬リストとすべての服用履歴を削除します。この操作は元に戻せません。実行しますか？
+      </p>
+      <div style="display:flex; gap:10px; justify-content:flex-end;">
+        <button type="button" class="btn btn-outline btn-sm" onclick="closeModal('reset-modal')">キャンセル</button>
+        <button type="button" class="btn btn-danger-outline btn-sm" onclick="executeResetAllData()">はい、すべて削除する</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 共通フッター -->
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-links">
+        <a href="index.html">トップページ（ノミドキ）</a>
+        <a href="columns.html">飲み時解説コラム</a>
+        <a href="faq.html">使い方ガイド・Q&amp;A</a>
+        <a href="contact.html">お問い合わせ</a>
+        <a href="index.html#lp-disclaimer">医療免責事項</a>
+        <a href="index.html#privacy-policy-doc">プライバシーポリシー</a>
+        <a href="index.html#terms-doc">利用規約</a>
+      </div>
+      <p style="margin-bottom:6px;">
+        運営：<span>個人開発（@Yoduru_M41）</span> ／ お問い合わせ：<span>nomidoki.support@gmail.com</span> ／ ver.1.0
+      </p>
+      <p>© 2026 ノミドキ（Nomidoki） All rights reserved. 本サービスは医療行為・診断・処方を提供するものではありません。</p>
+    </div>
+  </footer>
+
+  <script>
+    const STORAGE_KEY_MEDS = 'nomidoki_meds_v1';
+    const STORAGE_KEY_LOGS = 'nomidoki_logs_v1';
+
+    let medications = [];
+    let intakeLogs = {};
+    let currentFilter = 'ALL';
+
+    // 午前4:00切替の論理日付キー（YYYY-MM-DD）を取得
+    function getLogicalDateKey(dateObj = new Date()) {
+      const shifted = new Date(dateObj.getTime() - 4 * 60 * 60 * 1000);
+      const y = shifted.getFullYear();
+      const m = String(shifted.getMonth() + 1).padStart(2, '0');
+      const d = String(shifted.getDate()).padStart(2, '0');
+      return `${y}-${m}-${d}`;
+    }
+
+    function formatJapaneseDate(dateKey) {
+      const [y, m, d] = dateKey.split('-').map(Number);
+      const dt = new Date(y, m - 1, d);
+      const days = ['日', '月', '火', '水', '木', '金', '土'];
+      return `${y}年${m}月${d}日（${days[dt.getDay()]}）`;
+    }
+
+    function showToast(msg) {
+      const box = document.getElementById('toast-box');
+      if (!box) return;
+      box.textContent = msg;
+      box.classList.remove('hidden');
+      setTimeout(() => box.classList.add('hidden'), 2800);
+    }
+
+    function loadState() {
+      try {
+        const savedMeds = localStorage.getItem(STORAGE_KEY_MEDS);
+        const savedLogs = localStorage.getItem(STORAGE_KEY_LOGS);
+        medications = savedMeds ? JSON.parse(savedMeds) : [];
+        intakeLogs = savedLogs ? JSON.parse(savedLogs) : {};
+      } catch (e) {
+        medications = [];
+        intakeLogs = {};
+      }
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY_MEDS, JSON.stringify(medications));
+        localStorage.setItem(STORAGE_KEY_LOGS, JSON.stringify(intakeLogs));
+      } catch (e) {
+        showToast('ブラウザの保存容量がいっぱいです');
+      }
+    }
+
+    function isScheduledToday(med, todayKey) {
+      if (med.cycle === 'alternate' && med.startDate) {
+        const start = new Date(med.startDate + 'T00:00:00');
+        const current = new Date(todayKey + 'T00:00:00');
+        const diffDays = Math.round((current - start) / (1000 * 60 * 60 * 24));
+        return diffDays >= 0 && diffDays % 2 === 0;
+      }
+      return true;
+    }
+
+    function getCycleLabel(cycle) {
+      if (cycle === 'alternate') return '1日おき（隔日）';
+      if (cycle === 'as_needed') return '必要なとき（頓服）';
+      return '毎日';
+    }
+
+    function toggleAddForm() {
+      const panel = document.getElementById('add-med-panel');
+      panel.classList.toggle('hidden');
+      if (!panel.classList.contains('hidden')) {
+        document.getElementById('med-name-input').focus();
+      }
+    }
+
+    function handleAddMedication(event) {
+      event.preventDefault();
+      const name = document.getElementById('med-name-input').value.trim();
+      const timing = document.getElementById('med-timing-select').value;
+      const cycle = document.getElementById('med-cycle-select').value;
+      const dose = document.getElementById('med-dose-input').value.trim();
+
+      if (!name) return;
+
+      const newMed = {
+        id: 'med_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+        name,
+        timing,
+        cycle,
+        dose,
+        startDate: getLogicalDateKey()
+      };
+
+      medications.push(newMed);
+      saveState();
+      document.getElementById('add-med-form').reset();
+      document.getElementById('add-med-panel').classList.add('hidden');
+      renderApp();
+      showToast(`「${name}」を登録しました`);
+    }
+
+    function toggleIntake(medId) {
+      const todayKey = getLogicalDateKey();
+      if (!intakeLogs[todayKey]) intakeLogs[todayKey] = {};
+
+      if (intakeLogs[todayKey][medId]) {
+        delete intakeLogs[todayKey][medId];
+        showToast('服用記録を取り消しました');
+      } else {
+        const now = new Date();
+        const hh = String(now.getHours()).padStart(2, '0');
+        const mm = String(now.getMinutes()).padStart(2, '0');
+        intakeLogs[todayKey][medId] = `${hh}:${mm}`;
+        showToast('服用を記録しました！');
+      }
+      saveState();
+      renderApp();
+    }
+
+    function deleteMedication(medId) {
+      medications = medications.filter(m => m.id !== medId);
+      saveState();
+      renderApp();
+      showToast('お薬を削除しました');
+    }
+
+    function setTimingFilter(filterKey, btnEl) {
+      currentFilter = filterKey;
+      document.querySelectorAll('.timing-tab').forEach(b => b.classList.remove('active'));
+      if (btnEl) btnEl.classList.add('active');
+      renderApp();
+    }
+
+    function loadSampleMedications() {
+      const todayKey = getLogicalDateKey();
+      const samples = [
+        { id: 'sample_1_' + Date.now(), name: 'マルチビタミン（サンプル）', timing: '朝食後', cycle: 'daily', dose: '1粒・水またはぬるま湯で', startDate: todayKey },
+        { id: 'sample_2_' + Date.now(), name: '胃腸薬（サンプル）', timing: '夕食前', cycle: 'daily', dose: '1包・食事の30分前', startDate: todayKey },
+        { id: 'sample_3_' + Date.now(), name: '整腸サプリ（サンプル）', timing: '寝る前', cycle: 'alternate', dose: '2錠（1日おき）', startDate: todayKey }
+      ];
+      medications = medications.concat(samples);
+      saveState();
+      renderApp();
+      showToast('お試しサンプルのお薬を追加しました');
+    }
+
+    function openResetConfirmModal() {
+      document.getElementById('reset-modal').classList.remove('hidden');
+    }
+
+    function executeResetAllData() {
+      medications = [];
+      intakeLogs = {};
+      saveState();
+      closeModal('reset-modal');
+      renderApp();
+      showToast('すべてのデータを初期化しました');
+    }
+
+    function openHistoryModal() {
+      const body = document.getElementById('history-list-body');
+      body.innerHTML = '';
+
+      for (let i = 0; i < 7; i++) {
+        const d = new Date(Date.now() - i * 24 * 60 * 60 * 1000);
+        const key = getLogicalDateKey(d);
+        const dayLogs = intakeLogs[key] || {};
+        const entries = Object.entries(dayLogs);
+
+        const row = document.createElement('div');
+        row.style.cssText = 'padding:12px 14px; border:1px solid var(--border-soft); border-radius:12px; background:var(--surface-muted);';
+
+        let detailHtml = '<span style="font-size:0.82rem; color:var(--text-muted);">記録なし</span>';
+        if (entries.length > 0) {
+          detailHtml = entries.map(([mId, timeStr]) => {
+            const med = medications.find(m => m.id === mId);
+            const medTitle = med ? escapeHtml(med.name) : '削除済みのお薬';
+            return `<div style="font-size:0.84rem; color:var(--primary-dark); font-weight:700;">✅ ${medTitle}（${escapeHtml(timeStr)} 服用）</div>`;
+          }).join('');
+        }
+
+        row.innerHTML = `
+          <div style="font-size:0.86rem; font-weight:800; margin-bottom:4px;">${formatJapaneseDate(key)}</div>
+          ${detailHtml}
+        `;
+        body.appendChild(row);
+      }
+
+      document.getElementById('history-modal').classList.remove('hidden');
+    }
+
+    function closeModal(id) {
+      document.getElementById(id).classList.add('hidden');
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function renderApp() {
+      const todayKey = getLogicalDateKey();
+      document.getElementById('logical-date-display').textContent = formatJapaneseDate(todayKey);
+
+      const todayLogs = intakeLogs[todayKey] || {};
+      const todayMeds = medications.filter(m => isScheduledToday(m, todayKey));
+
+      // 達成率計算（頓服以外を分母にする）
+      const regularMeds = todayMeds.filter(m => m.cycle !== 'as_needed');
+      const takenRegularCount = regularMeds.filter(m => Boolean(todayLogs[m.id])).length;
+      document.getElementById('progress-pill').textContent = `達成：${takenRegularCount} / ${regularMeds.length}`;
+
+      // フィルター適用
+      const filteredMeds = todayMeds.filter(m => {
+        if (currentFilter === 'ALL') return true;
+        if (currentFilter === '朝') return m.timing.includes('起') || m.timing.includes('朝');
+        if (currentFilter === '昼') return m.timing.includes('昼');
+        if (currentFilter === '夕') return m.timing.includes('夕');
+        if (currentFilter === '寝る前') return m.timing === '寝る前';
+        if (currentFilter === '頓服') return m.timing.includes('頓服') || m.cycle === 'as_needed';
+        return true;
+      });
+
+      const container = document.getElementById('med-list-container');
+      container.innerHTML = '';
+
+      if (filteredMeds.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <p style="font-weight:800; margin-bottom:6px;">表示するお薬がありません</p>
+            <p style="font-size:0.84rem; margin-bottom:14px;">右上の「＋ お薬を追加登録」または下の「お試しサンプルを追加」から登録できます。</p>
+            <button type="button" class="btn btn-primary btn-sm" onclick="toggleAddForm()">＋ お薬を登録する</button>
+          </div>
+        `;
+        return;
+      }
+
+      filteredMeds.forEach(med => {
+        const takenTime = todayLogs[med.id];
+        const isTaken = Boolean(takenTime);
+
+        const item = document.createElement('div');
+        item.className = 'med-item' + (isTaken ? ' taken' : '');
+
+        item.innerHTML = `
+          <div class="med-info">
+            <div class="med-badges">
+              <span class="badge badge-timing">${escapeHtml(med.timing)}</span>
+              <span class="badge badge-cycle">${escapeHtml(getCycleLabel(med.cycle))}</span>
+              ${isTaken ? `<span class="badge badge-taken">✓ ${escapeHtml(takenTime)} 服用済</span>` : ''}
+            </div>
+            <div class="med-name">${escapeHtml(med.name)}</div>
+            ${med.dose ? `<div class="med-meta">用量・メモ：${escapeHtml(med.dose)}</div>` : ''}
+          </div>
+          <div class="med-actions">
+            <button type="button" class="btn ${isTaken ? 'btn-outline' : 'btn-primary'} btn-sm" onclick="toggleIntake('${med.id}')">
+              ${isTaken ? '記録を取り消す' : '✓ 飲んだ！'}
+            </button>
+            <button type="button" class="btn btn-ghost btn-sm" aria-label="削除" onclick="deleteMedication('${med.id}')">削除</button>
+          </div>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      loadState();
+      renderApp();
+    });
+  </script>
+</body>
+</html>
