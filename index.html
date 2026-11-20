@@ -3126,78 +3126,7 @@
       
     }
 
-    async function handleAuthSubmit(e) {
-      if (e) e.preventDefault();
-      const email = document.getElementById('auth-email')?.value.trim() || '';
-      const password = document.getElementById('auth-password')?.value || '';
-      const nickInput = document.getElementById('auth-nickname')?.value.trim() || '';
-      const defaultNick = nickInput || (email.includes('@') ? email.split('@')[0] : 'ゲスト');
-
-      if (!email || !password) {
-        showToast('メールアドレスとパスワードを入力してください', 'warning');
-        return;
-      }
-
-      if (firebaseAuth) {
-        try {
-          if (authMode === 'signup') {
-            const cred = await createUserWithEmailAndPassword(firebaseAuth, email, password);
-            if (cred.user && defaultNick) {
-              await updateProfile(cred.user, { displayName: defaultNick });
-            }
-            if (cred.user) {
-              await sendEmailVerification(cred.user);
-            }
-
-            appState = { nickname: defaultNick, medications: [], logs: {} };
-            await saveCloudData(cred.user.uid);
-            showToast('会員登録完了！確認メールを送信しました', 'success');
-          } else {
-            await signInWithEmailAndPassword(firebaseAuth, email, password);
-            showToast('ログインしました', 'success');
-          }
-          closeModal('auth-modal');
-          return;
-        }catch (err) {
-          const code = err?.code || '';
-          if (code === 'auth/email-already-in-use') {
-            showToast('このメールアドレスは既に登録されています', 'warning');
-          } else if (code === 'auth/invalid-credential' || code === 'auth/wrong-password' || code === 'auth/user-not-found') {
-            showToast('メールアドレスまたはパスワードが正しくありません', 'warning');
-          } else {
-            showToast('認証エラーが発生しました。入力内容をご確認ください', 'warning');
-          }
-          return;
-        }
-      }
-      
-
-      // ローカルフォールバック環境（プレビュー / file: 等）
-      const users = JSON.parse(localStorage.getItem(STORAGE_KEYS.LOCAL_USERS) || '{}');
-      if (authMode === 'signup') {
-        if (users[email]) {
-          showToast('このメールアドレスは既に登録されています', 'warning');
-          return;
-        }
-        const initialData = { nickname: defaultNick, medications: [], logs: {} };
-        users[email] = { uid: 'local_' + Date.now(), email, password, data: initialData };
-        localStorage.setItem(STORAGE_KEYS.LOCAL_USERS, JSON.stringify(users));
-        localStorage.setItem(STORAGE_KEYS.LOCAL_SESSION, email);
-        enterAppSession({ uid: users[email].uid, email, displayName: defaultNick, emailVerified: true, isLocalFallback: true }, initialData);
-        closeModal('auth-modal');
-        showToast('会員登録が完了しました', 'success');
-      } else {
-        const found = users[email];
-        if (!found || found.password !== password) {
-          showToast('メールアドレスまたはパスワードが正しくありません', 'warning');
-          return;
-        }
-        localStorage.setItem(STORAGE_KEYS.LOCAL_SESSION, email);
-        enterAppSession({ uid: found.uid, email, displayName: found.data.nickname || defaultNick, emailVerified: true, isLocalFallback: true }, found.data);
-        closeModal('auth-modal');
-        showToast('ログインしました', 'success');
-      }
-    }
+    
     
 
     /**
