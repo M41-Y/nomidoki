@@ -3132,16 +3132,7 @@
     /**
      * ログアウト・ブランドクリック
      */
-    async function handleLogout() {
-      const wasGuest = Boolean(currentUser && currentUser.isGuest);
-      if (currentUser && !currentUser.isGuest && firebaseAuth) {
-        await signOut(firebaseAuth);
-      }
-      localStorage.removeItem(STORAGE_KEYS.LOCAL_SESSION);
-      currentUser = null;
-      renderHeaderAndView();
-      showToast(wasGuest ? 'お試し体験を終了しました' : 'ログアウトしました');
-    }
+ 
 
     function handleBrandClick(event) {
       if (currentUser) {
